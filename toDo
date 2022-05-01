@@ -1,0 +1,9 @@
+url de creation pour big boss et demande un mot de passe
+seulement le big boss peut creer un big boss
+seulement le big boss peut creer un admin
+premier compte crée est un big boss par default
+si le big boss crée un compte big boss, il perd ses droits de big boss et devient user
+
+route communes a tous : user
+fonctions speciales admin : user/admin
+creation des comptes admin par le big boss
