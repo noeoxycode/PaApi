@@ -15,7 +15,7 @@ const restoSchema = new Schema({
     },
     menu: [{
         type: Schema.Types.ObjectId,
-        required: true
+        required: false
     }],
     promotion:  [{
         type: Schema.Types.ObjectId,
@@ -23,7 +23,7 @@ const restoSchema = new Schema({
     }],
     product: [{
         type: Schema.Types.ObjectId,
-        required: true
+        required: false
     }],
     admin: {
         type: Schema.Types.ObjectId,
@@ -42,7 +42,6 @@ export interface RestoProps {
     promotion: string[] | PromotionProps[];
     product: string[] | ProductProps[];
     admin: string | UserProps;
-    _id : string;
 }
 
 export type RestoDocument = RestoProps & Document;
