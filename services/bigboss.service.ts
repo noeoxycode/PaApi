@@ -33,6 +33,10 @@ export class BigBossService {
         return RestoModel.findById(restoId).exec();
     }
 
+    async getAll(): Promise<RestoDocument[]> {
+        return RestoModel.find().exec();
+    }
+
     async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
         console.log("test service update");
         const resto = await this.getById(restoId);
