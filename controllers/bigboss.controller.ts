@@ -1,5 +1,5 @@
 import express, {Request, Response, Router} from "express";
-import {AuthService} from "../services";
+import {AuthService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {BigBossService} from "../services/bigboss.service";
 
@@ -28,6 +28,19 @@ export class BigBossController {
         }
     }
 
+    async deleteResto(req: Request, res: Response) {
+        try {
+            const success = await BigBossService.getInstance().deleteById(req.params.resto_id);
+            if(success) {
+                res.status(204).end();
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     async logUser(req: Request, res: Response) {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
@@ -51,8 +64,8 @@ export class BigBossController {
         const router = express.Router();
         router.use(checkUserConnected());
         router.post('/createResto', express.json(), this.createResto.bind(this)); // permet d'ajouter un nouveau resto
-        /*router.delete('/deleteResto', this.createUser.bind(this)); // permet de delete un resto
-        router.put('/updateResto', express.json(), this.createUser.bind(this)); // permet d'update un resto
+        router.delete('/deleteResto/:resto_id', this.deleteResto.bind(this)); // permet de delete un resto
+        /*router.put('/updateResto', express.json(), this.createUser.bind(this)); // permet d'update un resto
         router.get('/getResto', this.createUser.bind(this)); // permet d'afficher un resto
         router.get('/getAllResto', this.createUser.bind(this)); // permet d'afficher tous les restos
 

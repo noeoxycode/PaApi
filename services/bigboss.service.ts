@@ -24,6 +24,11 @@ export class BigBossService {
         return resto;
     }
 
+    async deleteById(restoId: string): Promise<boolean> {
+        const res = await RestoModel.deleteOne({_id: restoId}).exec();
+        return res.deletedCount === 1;
+    }
+
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {
         const user = await UserModel.findOne({
