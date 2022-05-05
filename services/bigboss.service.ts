@@ -33,6 +33,34 @@ export class BigBossService {
         return RestoModel.findById(restoId).exec();
     }
 
+    async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
+        console.log("test service update");
+        const resto = await this.getById(restoId);
+        if(!resto) {
+            return null;
+        }
+        if(props.name !== undefined) {
+            resto.name = props.name;
+        }
+        if(props.adress !== undefined) {
+            resto.adress = props.adress;
+        }
+        if(props.menu !== undefined) {
+            resto.menu = props.menu;
+        }
+        if(props.promotion !== undefined) {
+            resto.promotion = props.promotion;
+        }
+        if(props.product !== undefined) {
+            resto.product = props.product;
+        }
+        if(props.admin !== undefined) {
+            resto.admin = props.admin;
+        }
+        const res = await resto.save();
+        return res;
+    }
+
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {
         const user = await UserModel.findOne({

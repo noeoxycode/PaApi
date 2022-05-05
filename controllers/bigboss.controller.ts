@@ -55,6 +55,22 @@ export class BigBossController {
         }
     }
 
+    async updateResto(req: Request, res: Response) {
+        console.log("test before try");
+        try {
+            console.log("test si on rentre dans le try");
+            const resto = await BigBossService.getInstance().updateById(req.params.resto_id, req.body);
+            if(!resto) {
+                res.status(404).end();
+                return;
+            }
+            res.json(resto);
+        } catch (err) {
+            console.log("test si on catch");
+            res.status(400).end();
+        }
+    }
+
     async logUser(req: Request, res: Response) {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
@@ -80,8 +96,8 @@ export class BigBossController {
         router.post('/createResto', express.json(), this.createResto.bind(this)); // permet d'ajouter un nouveau resto
         router.delete('/deleteResto/:resto_id', this.deleteResto.bind(this)); // permet de delete un resto
         router.get('/getResto/:resto_id', this.getResto.bind(this)); // permet d'afficher un resto
-        /*router.put('/updateResto', express.json(), this.createUser.bind(this)); // permet d'update un resto
-        router.get('/getAllResto', this.createUser.bind(this)); // permet d'afficher tous les restos
+        router.put('/updateResto/:resto_id', express.json(), this.updateResto.bind(this)); // permet d'update un resto
+        /*router.get('/getAllResto', this.createUser.bind(this)); // permet d'afficher tous les restos
 
         router.post('/subscribeAdmin', express.json(), this.createUser.bind(this)); // permet de creer un compte admin
         router.delete('/deleteAdmin', this.createUser.bind(this)); // permet de supp un compte admin
