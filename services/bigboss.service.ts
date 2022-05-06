@@ -1,4 +1,4 @@
-import {possibleRole, UserDocument, UserModel, UserProps} from "../models";
+import {possibleRole, Role, UserDocument, UserModel, UserProps} from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
@@ -24,22 +24,116 @@ export class BigBossService {
         return resto;
     }
 
-    async deleteById(restoId: string): Promise<boolean> {
+    public async createEmployee(user:Partial<UserProps>):Promise<UserDocument>{
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
+        if(!user.role) {
+            throw new Error('Missing role');
+        }
+        if(!(user.role in Role) || user.role==="BigBoss"){
+            throw new Error('Bad role');
+        }
+        const model = new UserModel({
+            login: user.login,
+            password: SecurityUtils.sha512(user.password),
+            role:user.role
+
+        });
+        return model.save();
+    }
+
+    async deleteRestoById(restoId: string): Promise<boolean> {
         const res = await RestoModel.deleteOne({_id: restoId}).exec();
         return res.deletedCount === 1;
     }
+    async deleteAdminById(adminId: string): Promise<boolean> {
+        const res = await UserModel.deleteOne({$and:[{_id:adminId},{ role :"Admin"}]}).exec();
+        return res.deletedCount === 1;
+    }
 
-    async getById(restoId: string): Promise<RestoDocument | null> {
+    async getuserByIdAndRole(userId: string,role:string=""): Promise<UserDocument | null> {
+        const user = await UserModel.findById(userId).exec();
+        if(!user){
+            return null;
+        }
+        if(role===""){
+            return user
+        }else {
+            if (user.role === role) {
+                return user;
+            } else {
+                return null;
+            }
+        }
+
+    }
+    async getRestoById(restoId: string): Promise<RestoDocument | null> {
         return RestoModel.findById(restoId).exec();
     }
 
-    async getAll(): Promise<RestoDocument[]> {
+    async getAllResto(): Promise<RestoDocument[]> {
         return RestoModel.find().exec();
     }
 
+    async affectRestoToAdmin(restoId: string,adminId: string): Promise<UserDocument | null> {
+        const resto = await this.getRestoById(restoId);
+        const admin = await this.getuserByIdAndRole(adminId,"Admin");
+        if(!admin || !resto) {
+            return null;
+        }
+        if(resto._id!==undefined){
+            admin.restaurant=resto._id;
+        }
+        const res = await admin.save();
+        return res;
+
+    }
+
+    async swapBoss(pastBoss: UserProps,newBoss: string){
+        const newB = await this.getuserByIdAndRole(newBoss,"Admin");
+        if (!pastBoss || !newB) {
+            return null;
+        }
+        const past= await UserModel.find({
+            role: "BigBoss"
+        }).exec();
+        if( past.length!==1){
+            return null;
+        }
+        newB.role=possibleRole["BigBoss"]
+        past[0].role=possibleRole["Admin"]
+        const res1 = await newB.save();
+        const res2 = await past[0].save();
+        return {res1,res2};
+    }
+
+    async updateAdminById(adminId: string, props: Partial<UserProps>): Promise<UserDocument | null> {
+        const admin = await this.getuserByIdAndRole(adminId,"Admin");
+        if (!admin) {
+            return null;
+        }
+        if(props.login !== undefined) {
+            admin.login = props.login;
+        }
+        if(props.password !== undefined) {
+            admin.password = SecurityUtils.sha512(props.password);
+        }
+        if(props.restaurant !== undefined) {
+            admin.restaurant = props.restaurant;
+        }
+        if(props.role !== undefined && props.role in Role) {
+            admin.role = props.role;
+        }
+        const res = await admin.save();
+        return res;
+
+    }
+    async getAllAdmin(): Promise<UserDocument[]> {
+        return UserModel.find({role: "Admin"}).exec();
+    }
     async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
-        console.log("test service update");
-        const resto = await this.getById(restoId);
+        const resto = await this.getRestoById(restoId);
         if(!resto) {
             return null;
         }

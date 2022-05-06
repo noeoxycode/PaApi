@@ -9,6 +9,13 @@ export const possibleRole:{[status:string]:string;}={
     "Preparator": 'Preparator',
     "Livreur": 'Livreur'
 }
+export enum Role {
+    BigBoss,
+    Admin,
+    Customer,
+    Preparator,
+    Livreur
+}
 
 const userSchema = new Schema({
     login: {
@@ -24,7 +31,7 @@ const userSchema = new Schema({
         type:Schema.Types.String,
         required: true
     },
-    restaurante: {
+    restaurant: {
         type: Schema.Types.ObjectId,
         required: false
     },
@@ -39,7 +46,6 @@ const userSchema = new Schema({
 });
 
 export interface UserProps {
-    _id: string;
     login: string;
     restaurant: string | RestoProps;
     role: string;
