@@ -39,7 +39,7 @@ export class AuthController {
         const router = express.Router();
         router.post('/subscribe', express.json(), this.createUser.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.post('/login', express.json(), this.logUser.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
-        router.get('/me', checkUserConnected(), this.me.bind(this));
+        router.get('/me', checkUserConnected(""), this.me.bind(this));
         return router;
     }
 }

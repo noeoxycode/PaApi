@@ -1,5 +1,21 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {SessionProps} from "./session.model";
+import {RestoProps} from "./restau.model";
+
+export const possibleRole:{[status:string]:string;}={
+    "BigBoss":'BigBoss',
+    "Admin": 'Admin',
+    "Customer": 'Customer',
+    "Preparator": 'Preparator',
+    "Livreur": 'Livreur'
+}
+export enum Role {
+    BigBoss,
+    Admin,
+    Customer,
+    Preparator,
+    Livreur
+}
 
 const userSchema = new Schema({
     login: {
@@ -10,6 +26,14 @@ const userSchema = new Schema({
     password: {
         type: Schema.Types.String,
         required: true
+    },
+    role: {
+        type:Schema.Types.String,
+        required: true
+    },
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        required: false
     },
     sessions: [{
         type: Schema.Types.ObjectId,
@@ -22,8 +46,9 @@ const userSchema = new Schema({
 });
 
 export interface UserProps {
-    _id: string;
     login: string;
+    restaurant: string | RestoProps;
+    role: string;
     password: string;
     sessions: string[] | SessionProps[];
 }

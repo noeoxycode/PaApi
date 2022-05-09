@@ -73,7 +73,7 @@ export class CoffeeController {
     buildRoutes(): Router {
         const router = express.Router();
         //router.use();
-        router.use(checkUserConnected());
+        router.use(checkUserConnected(""));
         router.post('/', express.json(), this.createCoffee.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.get('/', this.getAllCoffees.bind(this));
         router.get('/:coffee_id', this.getCoffee.bind(this));

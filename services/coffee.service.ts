@@ -1,4 +1,4 @@
-import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models";
+import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 export class CoffeeService {
     private static instance?: CoffeeService;
     public static getInstance(): CoffeeService {

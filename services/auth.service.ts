@@ -1,5 +1,5 @@
-import {UserDocument, UserModel, UserProps} from "../models";
-import {SecurityUtils} from "../utils";
+import {possibleRole, UserDocument, UserModel, UserProps} from "../models";
+import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
 
@@ -20,11 +20,19 @@ export class AuthService {
         if(!user.password) {
             throw new Error('Missing password');
         }
-        const model = new UserModel({
-            login: user.login,
-            password: SecurityUtils.sha512(user.password)
-        });
-        return model.save();
+        let roleName="";
+        if(await AuthUtils.checkBigBoss()){
+            roleName = possibleRole["BigBoss"];
+        }else{
+            roleName = possibleRole["Customer"];
+        }
+        console.log(roleName);
+            const model = new UserModel({
+                login: user.login,
+                password: SecurityUtils.sha512(user.password),
+                role:roleName
+            });
+            return model.save();
     }
 
     // Pick selectionne des champs dans le type

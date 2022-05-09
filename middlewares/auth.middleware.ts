@@ -8,7 +8,25 @@ declare module 'express' {
     }
 }
 
-export function checkUserConnected(): RequestHandler {
+function userAcces(role:string,user:UserProps){
+    if(role===""){return true;}
+    if(role==="BigBoss"&&user.role==="BigBoss"){
+        return true;
+    }else if(role==="Admin"&&user.role==="Admin"){
+        return true;
+    }else if(role==="Customer"&&user.role==="Customer"){
+        return true;
+    }else if(role==="Preparator"&&user.role==="Preparator"){
+        return true;
+    }else if(role==="Livreur"&&user.role==="Livreur"){
+        return true;
+    }else{
+        return false;
+    }
+
+}
+
+export function checkUserConnected(role:string): RequestHandler {
     return async function(req: Request,
                     res,
                     next) {
@@ -33,6 +51,10 @@ export function checkUserConnected(): RequestHandler {
                 res.status(401).end();
                 return;
             }
+            if(!userAcces(role,user)){
+                res.status(401).end();
+                return;
+            }
             req.user = user;
             next();
         } catch(err) {
@@ -40,3 +62,4 @@ export function checkUserConnected(): RequestHandler {
         }
     }
 }
+
