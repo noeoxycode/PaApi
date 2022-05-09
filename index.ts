@@ -2,7 +2,7 @@ import {config} from "dotenv";
 config();
 
 import express from "express";
-import {AuthController, CoffeeController, BigBossController} from "./controllers";
+import {AuthController, CoffeeController, BigBossController,AdminController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
 
 async function startServer(): Promise<void> {
@@ -22,6 +22,8 @@ async function startServer(): Promise<void> {
    app.use('/auth', authController.buildRoutes())
    const bigbossController = new BigBossController();
    app.use('/bigboss', bigbossController.buildRoutes())
+   const adminController = new AdminController();
+   app.use('/admin', adminController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);
