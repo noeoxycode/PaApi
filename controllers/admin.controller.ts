@@ -62,34 +62,6 @@ export class AdminController {
         }
     }
 
-    async deleteAdmin(req: Request, res: Response) {
-        try {
-            const success = await AdminService.getInstance().deleteAdminById(req.params.admin_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
-            }
-        } catch(err) {
-            res.status(400).end();
-        }
-    }
-
-
-    async getAdminById(req: Request, res: Response) {
-        try {
-            const admin = await AdminService.getInstance().getuserByIdAndRole(req.params.admin_id,"Admin");
-            if(admin === null) {
-                res.status(404).end();
-                return;
-            }
-            res.json(admin);
-        } catch(err) {
-            res.status(400).end();
-            return;
-        }
-    }
-
     async getAllAdmin(req: Request, res: Response) {
         const admins = await AdminService.getInstance().getAllAdmin();
         res.json(admins);
@@ -116,6 +88,20 @@ export class AdminController {
                 return;
             }
             res.json(product);
+        } catch(err) {
+            res.status(400).end();
+            return;
+        }
+    }
+
+    async getMenu(req: Request, res: Response) {
+        try {
+            const menu = await AdminService.getInstance().getMenuById(req.params.menu_id);
+            if(menu === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(menu);
         } catch(err) {
             res.status(400).end();
             return;
@@ -155,8 +141,8 @@ export class AdminController {
         router.get('/getAllProducts', this.getAllProduct.bind(this)); // permet d'afficher tous les produits
         
         router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
-        /*router.get('/getMenu/:menu_id', this.getMenuById.bind(this)); // permet d'afficher un admin
-        router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
+        router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un admin
+        /*router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
         router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
         router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
 

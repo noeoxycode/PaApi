@@ -88,6 +88,10 @@ export class AdminService {
         return ProductModel.findById(productId).exec();
     }
 
+    getMenuById(menuId: string): Promise<MenuDocument | null> {
+        return MenuModel.findById(menuId).exec();
+    }
+
     async getAllProduct(): Promise<ProductDocument[]> {
         return ProductModel.find().exec();
     }
