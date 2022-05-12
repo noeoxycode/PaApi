@@ -113,6 +113,11 @@ export class AdminController {
         res.json(product);
     }
 
+    async getAllMenu(req: Request, res: Response) {
+        const menu = await AdminService.getInstance().getAllMenu();
+        res.json(menu);
+    }
+
     async updateProduct(req: Request, res: Response) {
         try {
             const product = await AdminService.getInstance().updateById(req.params.product_id, req.body);
@@ -142,8 +147,8 @@ export class AdminController {
         
         router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
         router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un admin
-        /*router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
-        router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
+        router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
+        /*router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
         router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
 
         router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu

@@ -96,6 +96,10 @@ export class AdminService {
         return ProductModel.find().exec();
     }
 
+    async getAllMenu(): Promise<MenuDocument[]> {
+        return MenuModel.find().exec();
+    }
+
     async swapBoss(pastBoss: UserProps,newBoss: string){
         const newB = await this.getuserByIdAndRole(newBoss,"Admin");
         if (!pastBoss || !newB) {
