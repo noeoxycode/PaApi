@@ -77,26 +77,12 @@ export class AdminService {
         }
 
     }
-    async getRestoById(restoId: string): Promise<RestoDocument | null> {
-        return RestoModel.findById(restoId).exec();
+    async getProductById(productId: string): Promise<ProductDocument | null> {
+        return ProductModel.findById(productId).exec();
     }
 
     async getAllResto(): Promise<RestoDocument[]> {
         return RestoModel.find().exec();
-    }
-
-    async affectRestoToAdmin(restoId: string,adminId: string): Promise<UserDocument | null> {
-        const resto = await this.getRestoById(restoId);
-        const admin = await this.getuserByIdAndRole(adminId,"Admin");
-        if(!admin || !resto) {
-            return null;
-        }
-        if(resto._id!==undefined){
-            admin.restaurant=resto._id;
-        }
-        const res = await admin.save();
-        return res;
-
     }
 
     async swapBoss(pastBoss: UserProps,newBoss: string){
@@ -141,7 +127,7 @@ export class AdminService {
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }
-    async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
+    /*async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
         const resto = await this.getRestoById(restoId);
         if(!resto) {
             return null;
@@ -166,7 +152,7 @@ export class AdminService {
         }
         const res = await resto.save();
         return res;
-    }
+    }*/
 
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {
