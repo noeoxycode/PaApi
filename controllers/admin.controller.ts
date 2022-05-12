@@ -103,9 +103,9 @@ export class AdminController {
         }
     }
 
-    async getAllResto(req: Request, res: Response) {
-        const resto = await AdminService.getInstance().getAllResto();
-        res.json(resto);
+    async getAllProduct(req: Request, res: Response) {
+        const product = await AdminService.getInstance().getAllProduct();
+        res.json(product);
     }
 
     async swapAdmin(req: Request, res: Response) {
@@ -142,9 +142,9 @@ export class AdminController {
         router.delete('/deleteProduct/:product_id', this.deleteProduct.bind(this)); // permet de delete un produit
         router.get('/getProduct/:product_id', this.getProduct.bind(this)); // permet d'afficher un produit
         router.put('/updateProduct/:product_id', express.json(), this.updateProduct.bind(this)); // permet d'update un produit
-        /*router.get('/getAllProducts', this.getAllResto.bind(this)); // permet d'afficher tous les produits
+        router.get('/getAllProducts', this.getAllProduct.bind(this)); // permet d'afficher tous les produits
         
-        router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
+        /*router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
         router.get('/getMenu/:menu_id', this.getMenuById.bind(this)); // permet d'afficher un admin
         router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
         router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin

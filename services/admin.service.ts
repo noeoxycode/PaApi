@@ -81,8 +81,8 @@ export class AdminService {
         return ProductModel.findById(productId).exec();
     }
 
-    async getAllResto(): Promise<RestoDocument[]> {
-        return RestoModel.find().exec();
+    async getAllProduct(): Promise<ProductDocument[]> {
+        return ProductModel.find().exec();
     }
 
     async swapBoss(pastBoss: UserProps,newBoss: string){
