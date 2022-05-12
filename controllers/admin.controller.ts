@@ -5,24 +5,20 @@ import {AdminService} from "../services/admin.service";
 
 export class AdminController {
 
-    async createResto(req: Request, res: Response) {
-        console.log("begening create resto");
-        const resto = req.body;
-        if(!resto.name || !resto.adress || !resto.admin) {
+    async createProduct(req: Request, res: Response) {
+        const product = req.body;
+        if(!product.name || !product.price || !product.type || !product.description) {
             res.status(400).end(); // 400 -> bad request
             return;
         }
-        console.log("before try");
         try {
-            const user = await AdminService.getInstance().createResto({
+            const product = await AdminService.getInstance().createProduct({
                 name: req.body.name,
-                adress: req.body.adress,
-                menu: req.body.menu,
-                promotion: req.body.promotion,
-                product: req.body.product,
-                admin: req.body.admin
+                price: req.body.price,
+                type: req.body.type,
+                description: req.body.description,
             });
-            res.json(user);
+            res.json(product);
         } catch(err) {
             res.status(400).end();
         }
@@ -173,8 +169,8 @@ export class AdminController {
     buildRoutes(): Router {
         const router = express.Router();
         router.use(checkUserConnected("Admin"));
-        router.post('/addProduct', express.json(), this.createResto.bind(this)); // permet d'ajouter un produit au menu
-        router.delete('/deleteProduct/:product_id', this.deleteResto.bind(this)); // permet de delete un produit
+        router.post('/addProduct', express.json(), this.createProduct.bind(this)); // permet d'ajouter un produit au menu
+        /*router.delete('/deleteProduct/:product_id', this.deleteResto.bind(this)); // permet de delete un produit
         router.put('/updateProduct/:product_id', express.json(), this.updateResto.bind(this)); // permet d'update un produit
         router.get('/getProduct/:product_id', this.getAllResto.bind(this)); // permet d'afficher un produit
         router.get('/getAllProducts', this.getAllResto.bind(this)); // permet d'afficher tous les produits
@@ -196,7 +192,7 @@ export class AdminController {
         router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
         router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
-
+*/
         return router;
     }
 }

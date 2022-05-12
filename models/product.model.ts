@@ -39,7 +39,6 @@ export interface ProductProps {
     price: number;
     description: string;
     type:string;
-    _id : string;
 }
 
 export type ProductDocument = ProductProps & Document;

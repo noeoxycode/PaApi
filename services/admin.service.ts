@@ -1,4 +1,13 @@
-import {possibleRole, Role, UserDocument, UserModel, UserProps} from "../models";
+import {
+    possibleRole,
+    ProductDocument,
+    ProductModel,
+    ProductProps,
+    Role,
+    UserDocument,
+    UserModel,
+    UserProps
+} from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
@@ -18,10 +27,10 @@ export class AdminService {
 
     private constructor() { }
 
-    public async createResto(props: RestoProps): Promise<RestoDocument> {
-        const model = new RestoModel(props);
-        const resto = await model.save();
-        return resto;
+    public async createProduct(props: ProductProps): Promise<ProductDocument> {
+        const model = new ProductModel(props);
+        const product = await model.save();
+        return product;
     }
 
     public async createEmployee(user:Partial<UserProps>):Promise<UserDocument>{

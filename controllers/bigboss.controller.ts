@@ -3,7 +3,7 @@ import {AuthService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {BigBossService} from "../services/bigboss.service";
 
-export class BigBossControllerController {
+export class BigBossController {
 
     async createResto(req: Request, res: Response) {
         console.log("begening create resto");
