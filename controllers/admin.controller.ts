@@ -105,9 +105,9 @@ export class AdminController {
         res.json(admins);
     }
 
-    async deleteResto(req: Request, res: Response) {
+    async deleteProduct(req: Request, res: Response) {
         try {
-            const success = await AdminService.getInstance().deleteRestoById(req.params.resto_id);
+            const success = await AdminService.getInstance().deleteProductById(req.params.product_id);
             if(success) {
                 res.status(204).end();
             } else {
@@ -170,8 +170,8 @@ export class AdminController {
         const router = express.Router();
         router.use(checkUserConnected("Admin"));
         router.post('/addProduct', express.json(), this.createProduct.bind(this)); // permet d'ajouter un produit au menu
-        /*router.delete('/deleteProduct/:product_id', this.deleteResto.bind(this)); // permet de delete un produit
-        router.put('/updateProduct/:product_id', express.json(), this.updateResto.bind(this)); // permet d'update un produit
+        router.delete('/deleteProduct/:product_id', this.deleteProduct.bind(this)); // permet de delete un produit
+        /*router.put('/updateProduct/:product_id', express.json(), this.updateResto.bind(this)); // permet d'update un produit
         router.get('/getProduct/:product_id', this.getAllResto.bind(this)); // permet d'afficher un produit
         router.get('/getAllProducts', this.getAllResto.bind(this)); // permet d'afficher tous les produits
         

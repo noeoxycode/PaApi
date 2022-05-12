@@ -52,8 +52,8 @@ export class AdminService {
         return model.save();
     }
 
-    async deleteRestoById(restoId: string): Promise<boolean> {
-        const res = await RestoModel.deleteOne({_id: restoId}).exec();
+    async deleteProductById(product_id: string): Promise<boolean> {
+        const res = await ProductModel.deleteOne({_id: product_id}).exec();
         return res.deletedCount === 1;
     }
     async deleteAdminById(adminId: string): Promise<boolean> {
