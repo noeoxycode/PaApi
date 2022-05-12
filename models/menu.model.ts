@@ -31,7 +31,6 @@ export interface MenuProps {
     price: number;
     description: string;
     content: string[] | ProductProps[];
-    _id : string;
 }
 
 export type MenuDocument = MenuProps & Document;

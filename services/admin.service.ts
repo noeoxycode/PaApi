@@ -13,6 +13,7 @@ import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
 import {RestoDocument, RestoModel, RestoProps} from "../models/restau.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
+import {MenuDocument, MenuModel, MenuProps} from "../models/menu.model";
 
 export class AdminService {
 
@@ -31,6 +32,12 @@ export class AdminService {
         const model = new ProductModel(props);
         const product = await model.save();
         return product;
+    }
+
+    public async createMenu(props: MenuProps): Promise<MenuDocument> {
+        const model = new MenuModel(props);
+        const menu = await model.save();
+        return menu;
     }
 
     public async createEmployee(user:Partial<UserProps>):Promise<UserDocument>{
