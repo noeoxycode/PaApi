@@ -103,56 +103,29 @@ export class AdminService {
         return {res1,res2};
     }
 
-    async updateAdminById(adminId: string, props: Partial<UserProps>): Promise<UserDocument | null> {
-        const admin = await this.getuserByIdAndRole(adminId,"Admin");
-        if (!admin) {
-            return null;
-        }
-        if(props.login !== undefined) {
-            admin.login = props.login;
-        }
-        if(props.password !== undefined) {
-            admin.password = SecurityUtils.sha512(props.password);
-        }
-        if(props.restaurant !== undefined) {
-            admin.restaurant = props.restaurant;
-        }
-        if(props.role !== undefined && props.role in Role) {
-            admin.role = props.role;
-        }
-        const res = await admin.save();
-        return res;
-
-    }
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }
-    /*async updateById(restoId: string, props: RestoProps): Promise<RestoDocument | null> {
-        const resto = await this.getRestoById(restoId);
-        if(!resto) {
+    async updateById(productId: string, props: ProductProps): Promise<ProductDocument | null> {
+        const product = await this.getProductById(productId);
+        if(!product) {
             return null;
         }
         if(props.name !== undefined) {
-            resto.name = props.name;
+            product.name = props.name;
         }
-        if(props.adress !== undefined) {
-            resto.adress = props.adress;
+        if(props.price !== undefined) {
+            product.price = props.price;
         }
-        if(props.menu !== undefined) {
-            resto.menu = props.menu;
+        if(props.type !== undefined) {
+            product.type = props.type;
         }
-        if(props.promotion !== undefined) {
-            resto.promotion = props.promotion;
+        if(props.description !== undefined) {
+            product.description = props.description;
         }
-        if(props.product !== undefined) {
-            resto.product = props.product;
-        }
-        if(props.admin !== undefined) {
-            resto.admin = props.admin;
-        }
-        const res = await resto.save();
+        const res = await product.save();
         return res;
-    }*/
+    }
 
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {

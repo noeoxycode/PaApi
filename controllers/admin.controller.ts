@@ -56,18 +56,6 @@ export class AdminController {
         }
     }
 
-    async updateAdmin(req: Request, res: Response) {
-        try {
-            const admin = await AdminService.getInstance().updateAdminById(req.params.admin_id, req.body);
-            if (!admin) {
-                res.status(404).end();
-                return;
-            }
-            res.json(admin);
-        } catch (err) {
-            res.status(400).end();
-        }
-    }
 
     async getAdminById(req: Request, res: Response) {
         try {
@@ -129,20 +117,19 @@ export class AdminController {
         res.json(Boss);
     }
 
-    /*async updateResto(req: Request, res: Response) {
-        console.log("test before try");
+    async updateProduct(req: Request, res: Response) {
         try {
-            const resto = await AdminService.getInstance().updateById(req.params.resto_id, req.body);
-            if (!resto) {
+            const product = await AdminService.getInstance().updateById(req.params.product_id, req.body);
+            if (!product) {
                 res.status(404).end();
                 return;
             }
-            res.json(resto);
+            res.json(product);
         } catch (err) {
             console.log("test si on catch");
             res.status(400).end();
         }
-    }*/
+    }
 
     async me(req: Request, res: Response) {
         res.json(req.user);
@@ -154,8 +141,8 @@ export class AdminController {
         router.post('/addProduct', express.json(), this.createProduct.bind(this)); // permet d'ajouter un produit au menu
         router.delete('/deleteProduct/:product_id', this.deleteProduct.bind(this)); // permet de delete un produit
         router.get('/getProduct/:product_id', this.getProduct.bind(this)); // permet d'afficher un produit
-        /*router.put('/updateProduct/:product_id', express.json(), this.updateResto.bind(this)); // permet d'update un produit
-        router.get('/getAllProducts', this.getAllResto.bind(this)); // permet d'afficher tous les produits
+        router.put('/updateProduct/:product_id', express.json(), this.updateProduct.bind(this)); // permet d'update un produit
+        /*router.get('/getAllProducts', this.getAllResto.bind(this)); // permet d'afficher tous les produits
         
         router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
         router.get('/getMenu/:menu_id', this.getMenuById.bind(this)); // permet d'afficher un admin
