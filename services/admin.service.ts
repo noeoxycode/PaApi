@@ -117,6 +117,10 @@ export class AdminService {
         return MenuModel.find().exec();
     }
 
+    async getAllPromo(): Promise<PromotionDocument[]> {
+        return PromotionModel.find().exec();
+    }
+
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }

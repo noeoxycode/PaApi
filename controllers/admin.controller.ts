@@ -164,6 +164,10 @@ export class AdminController {
         const menu = await AdminService.getInstance().getAllMenu();
         res.json(menu);
     }
+    async getAllPromo(req: Request, res: Response) {
+        const promo = await AdminService.getInstance().getAllPromo();
+        res.json(promo);
+    }
 
     async updateProduct(req: Request, res: Response) {
         try {
@@ -213,9 +217,9 @@ export class AdminController {
 
         router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
         router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
-        /*router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
-        router.get('/getPromo/:promo_id', this.getAllPromo.bind(this)); // permet d'afficher une promo
         router.get('/getAllPromos', this.getAllPromo.bind(this)); // permet d'afficher toutes les promos
+        /*router.get('/getPromo/:promo_id', this.getAllPromo.bind(this)); // permet d'afficher une promo
+        router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
 
         router.post('/subscribeOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
         router.get('/getOrder/:order_id', this.getOrderById.bind(this)); // permet d'afficher un Order
