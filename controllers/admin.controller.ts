@@ -210,6 +210,19 @@ export class AdminController {
         }
     }
 
+    async updatePromo(req: Request, res: Response) {
+        try {
+            const promo = await AdminService.getInstance().updatePromoById(req.params.promo_id, req.body);
+            if (!promo) {
+                res.status(404).end();
+                return;
+            }
+            res.json(promo);
+        } catch (err) {
+            res.status(400).end();
+        }
+    }
+
     async me(req: Request, res: Response) {
         res.json(req.user);
     }
@@ -233,9 +246,9 @@ export class AdminController {
         router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
         router.get('/getAllPromos', this.getAllPromo.bind(this)); // permet d'afficher toutes les promos
         router.get('/getPromo/:promo_id', this.getPromo.bind(this)); // permet d'afficher une promo
-        /*router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
+        router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
 
-        router.post('/subscribeOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
+        /*router.post('/subscribeOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
         router.get('/getOrder/:order_id', this.getOrderById.bind(this)); // permet d'afficher un Order
         router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order

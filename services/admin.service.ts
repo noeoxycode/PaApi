@@ -169,6 +169,33 @@ export class AdminService {
         return res;
     }
 
+    async updatePromoById(promoId: string, props: PromotionProps): Promise<PromotionDocument | null> {
+        const promo = await this.getPromoById(promoId);
+        if(!promo) {
+            return null;
+        }
+        if(props.name !== undefined) {
+            promo.name = props.name;
+        }
+        if(props.price !== undefined) {
+            promo.price = props.price;
+        }
+        if(props.promotionType !== undefined) {
+            promo.promotionType = props.promotionType;
+        }
+        if(props.beginDate !== undefined) {
+            promo.beginDate = props.beginDate;
+        }
+        if(props.endDate !== undefined) {
+            promo.endDate = props.endDate;
+        }
+        if(props.content !== undefined) {
+            promo.content = props.content;
+        }
+        const res = await promo.save();
+        return res;
+    }
+
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {
         const user = await UserModel.findOne({
