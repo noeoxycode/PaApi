@@ -43,6 +43,27 @@ export class AdminController {
         }
     }
 
+    async createPromo(req: Request, res: Response) {
+        const promo = req.body;
+        if(!promo.name || !promo.price || !promo.promotionType) {
+            res.status(400).end(); // 400 -> bad request
+            return;
+        }
+        try {
+            const promo = await AdminService.getInstance().createPromo({
+                name: req.body.name,
+                price: req.body.price,
+                promotionType: req.body.promotionType,
+                beginDate: req.body.beginDate,
+                endDate: req.body.endDate,
+                content: req.body.content
+            });
+            res.json(promo);
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     async createAdmin(req: Request, res: Response) {
         const admin = req.body;
         if(!admin.login || !admin.password || !admin.role) {
@@ -177,8 +198,8 @@ export class AdminController {
         router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
         router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
 
-        /*router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
-        router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
+        router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
+        /*router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
         router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
         router.get('/getPromo/:promo_id', this.getAllPromo.bind(this)); // permet d'afficher une promo
         router.get('/getAllPromos', this.getAllPromo.bind(this)); // permet d'afficher toutes les promos

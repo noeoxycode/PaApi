@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document, Model} from "mongoose";
+ import mongoose, {Schema, Document, Model} from "mongoose";
 import {ProductModel, ProductProps} from "./product.model";
 import {MenuModel, MenuProps} from "./menu.model";
 
@@ -17,7 +17,7 @@ const promotionSchema = new Schema({
     },
     beginDate: {
         type: Schema.Types.Date,
-        required: true
+        required: false
     },
     endDate: {
         type: Schema.Types.Date,
@@ -41,7 +41,6 @@ export interface PromotionProps {
     beginDate: Date;
     endDate: Date;
     content: string[] | ProductProps[] | MenuProps[]; //a confirmer
-    _id : string;
 }
 
 export type PromotionDocument = PromotionProps & Document;

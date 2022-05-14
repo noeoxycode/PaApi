@@ -14,6 +14,7 @@ import {Session} from "inspector";
 import {RestoDocument, RestoModel, RestoProps} from "../models/restau.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 import {MenuDocument, MenuModel, MenuProps} from "../models/menu.model";
+import {PromotionDocument, PromotionModel, PromotionProps} from "../models/promotion.model";
 
 export class AdminService {
 
@@ -38,6 +39,12 @@ export class AdminService {
         const model = new MenuModel(props);
         const menu = await model.save();
         return menu;
+    }
+
+    public async createPromo(props: PromotionProps): Promise<PromotionDocument> {
+        const model = new PromotionModel(props);
+        const promo = await model.save();
+        return promo;
     }
 
     public async createEmployee(user:Partial<UserProps>):Promise<UserDocument>{
