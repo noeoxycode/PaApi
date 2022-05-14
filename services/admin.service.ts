@@ -75,6 +75,11 @@ export class AdminService {
         const res = await MenuModel.deleteOne({_id: menu_id}).exec();
         return res.deletedCount === 1;
     }
+
+    async deletePromoById(promo_id: string): Promise<boolean> {
+        const res = await PromotionModel.deleteOne({_id: promo_id}).exec();
+        return res.deletedCount === 1;
+    }
     async deleteAdminById(adminId: string): Promise<boolean> {
         const res = await UserModel.deleteOne({$and:[{_id:adminId},{ role :"Admin"}]}).exec();
         return res.deletedCount === 1;
