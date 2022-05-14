@@ -100,28 +100,10 @@ export class AdminService {
         return MenuModel.find().exec();
     }
 
-    async swapBoss(pastBoss: UserProps,newBoss: string){
-        const newB = await this.getuserByIdAndRole(newBoss,"Admin");
-        if (!pastBoss || !newB) {
-            return null;
-        }
-        const past= await UserModel.find({
-            role: "Admin"
-        }).exec();
-        if( past.length!==1){
-            return null;
-        }
-        newB.role=possibleRole["Admin"]
-        past[0].role=possibleRole["Admin"]
-        const res1 = await newB.save();
-        const res2 = await past[0].save();
-        return {res1,res2};
-    }
-
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }
-    async updateById(productId: string, props: ProductProps): Promise<ProductDocument | null> {
+    async updateProductById(productId: string, props: ProductProps): Promise<ProductDocument | null> {
         const product = await this.getProductById(productId);
         if(!product) {
             return null;
@@ -139,6 +121,27 @@ export class AdminService {
             product.description = props.description;
         }
         const res = await product.save();
+        return res;
+    }
+    async updateMenuById(menuId: string, props: MenuProps): Promise<MenuDocument | null> {
+        const menu = await this.getMenuById(menuId);
+        console.log(menu);
+        if(!menu) {
+            return null;
+        }
+        if(props.name !== undefined) {
+            menu.name = props.name;
+        }
+        if(props.price !== undefined) {
+            menu.price = props.price;
+        }
+        if(props.description !== undefined) {
+            menu.description = props.description;
+        }
+        if(props.content !== undefined) {
+            menu.content = props.content;
+        }
+        const res = await menu.save();
         return res;
     }
 

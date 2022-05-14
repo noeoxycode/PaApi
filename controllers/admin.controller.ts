@@ -120,7 +120,7 @@ export class AdminController {
 
     async updateProduct(req: Request, res: Response) {
         try {
-            const product = await AdminService.getInstance().updateById(req.params.product_id, req.body);
+            const product = await AdminService.getInstance().updateProductById(req.params.product_id, req.body);
             if (!product) {
                 res.status(404).end();
                 return;
@@ -128,6 +128,19 @@ export class AdminController {
             res.json(product);
         } catch (err) {
             console.log("test si on catch");
+            res.status(400).end();
+        }
+    }
+
+    async updateMenu(req: Request, res: Response) {
+        try {
+            const menu = await AdminService.getInstance().updateMenuById(req.params.menu_id, req.body);
+            if (!menu) {
+                res.status(404).end();
+                return;
+            }
+            res.json(menu);
+        } catch (err) {
             res.status(400).end();
         }
     }
@@ -148,8 +161,8 @@ export class AdminController {
         router.post('/addMenu', express.json(), this.createMenu.bind(this)); // permet de creer un compte admin
         router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un admin
         router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
-        /*router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
-        router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
+        router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
+        /*router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
 
         router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
         router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
