@@ -63,6 +63,11 @@ export class AdminService {
         const res = await ProductModel.deleteOne({_id: product_id}).exec();
         return res.deletedCount === 1;
     }
+
+    async deleteMenuById(menu_id: string): Promise<boolean> {
+        const res = await MenuModel.deleteOne({_id: menu_id}).exec();
+        return res.deletedCount === 1;
+    }
     async deleteAdminById(adminId: string): Promise<boolean> {
         const res = await UserModel.deleteOne({$and:[{_id:adminId},{ role :"Admin"}]}).exec();
         return res.deletedCount === 1;
@@ -125,7 +130,6 @@ export class AdminService {
     }
     async updateMenuById(menuId: string, props: MenuProps): Promise<MenuDocument | null> {
         const menu = await this.getMenuById(menuId);
-        console.log(menu);
         if(!menu) {
             return null;
         }

@@ -80,6 +80,19 @@ export class AdminController {
         }
     }
 
+    async deleteMenu(req: Request, res: Response) {
+        try {
+            const success = await AdminService.getInstance().deleteMenuById(req.params.menu_id);
+            if(success) {
+                res.status(204).end();
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     async getProduct(req: Request, res: Response) {
         try {
             const product = await AdminService.getInstance().getProductById(req.params.product_id);
@@ -162,9 +175,9 @@ export class AdminController {
         router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un admin
         router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les admins
         router.put('/updateMenu/:menu_id', express.json(), this.updateMenu.bind(this)); // update admin
-        /*router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
+        router.delete('/deleteMenu/:menu_id', this.deleteMenu.bind(this)); // permet de supp un compte admin
 
-        router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
+        /*router.post('/addPromo', express.json(), this.createPromo.bind(this)); // permet d'ajouter une promo au menu
         router.delete('/deletePromo/:promo_id', this.deletePromo.bind(this)); // permet de delete une promo
         router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
         router.get('/getPromo/:promo_id', this.getAllPromo.bind(this)); // permet d'afficher une promo
