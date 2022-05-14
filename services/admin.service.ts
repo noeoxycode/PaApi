@@ -109,6 +109,10 @@ export class AdminService {
         return MenuModel.findById(menuId).exec();
     }
 
+    getPromoById(menuId: string): Promise<PromotionDocument | null> {
+        return PromotionModel.findById(menuId).exec();
+    }
+
     async getAllProduct(): Promise<ProductDocument[]> {
         return ProductModel.find().exec();
     }
