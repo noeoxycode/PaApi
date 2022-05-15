@@ -136,6 +136,10 @@ export class AdminService {
         return PromotionModel.find().exec();
     }
 
+    async getAllOrder(): Promise<OrderDocument[]> {
+        return OrderModel.find().exec();
+    }
+
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }
