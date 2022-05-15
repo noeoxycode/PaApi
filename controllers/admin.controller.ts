@@ -64,20 +64,22 @@ export class AdminController {
         }
     }
 
-    async createAdmin(req: Request, res: Response) {
-        const admin = req.body;
-        if(!admin.login || !admin.password || !admin.role) {
+    async createOrder(req: Request, res: Response) {
+        const order = req.body;
+        if(!order.price || !order.date || !order.status) {
             res.status(400).end(); // 400 -> bad request
             return;
         }
         try {
-            const user = await AdminService.getInstance().createEmployee({
-                login: req.body.login,
-                password: req.body.password,
-                role: req.body.role,
-                restaurant: req.body.restaurant
+            const order = await AdminService.getInstance().createOrder({
+                price: req.body.price,
+                status: req.body.status,
+                customerId: req.body.customerId,
+                preparatorId: req.body.preparatorId,
+                date: req.body.date,
+                content: req.body.content
             });
-            res.json(user);
+            res.json(order);
         } catch(err) {
             res.status(400).end();
         }
@@ -248,8 +250,8 @@ export class AdminController {
         router.get('/getPromo/:promo_id', this.getPromo.bind(this)); // permet d'afficher une promo
         router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
 
-        /*router.post('/subscribeOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
-        router.get('/getOrder/:order_id', this.getOrderById.bind(this)); // permet d'afficher un Order
+        router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
+        /*router.get('/getOrder/:order_id', this.getOrderById.bind(this)); // permet d'afficher un Order
         router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
         router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order

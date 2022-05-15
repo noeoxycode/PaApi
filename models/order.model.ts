@@ -4,12 +4,6 @@ import {MenuModel, MenuProps} from "./menu.model";
 import {PromotionModel, PromotionProps} from "./promotion.model";
 import {UserProps, UserModel} from "./user.model";
 
-const orderStat:{[status:string]:string}={
-    orderReceived:'Commande recue',
-    inProgress: 'En preparation',
-    ready: 'Prete',
-    delivered: "livrée"
-}
 const orderSchema = new Schema({
     price: {
         type: Schema.Types.Number,
@@ -33,7 +27,7 @@ const orderSchema = new Schema({
         ref: "Content"
     }],
     status: {
-        type: orderStat,
+        type: Schema.Types.Number,
         required: true
     }
 }, {
@@ -49,7 +43,6 @@ export interface OrderProps {
     preparatorId:string | UserProps;
     date: Date;
     content: string[] | ProductProps[] | MenuProps[] | PromotionProps[]; //a confirmer
-    _id : string;
 }
 
 export type OrderDocument = OrderProps & Document;
