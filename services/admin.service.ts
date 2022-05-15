@@ -211,6 +211,37 @@ export class AdminService {
         return res;
     }
 
+    async updateOrderById(orderId: string, props: OrderProps): Promise<OrderDocument | null> {
+        console.log("in update before get by id");
+        const order = await this.getOrderById(orderId);
+        console.log("order after getbyid ", order);
+        console.log("order in props ", props);
+        if(!order) {
+            return null;
+        }
+        if(props.price !== undefined) {
+            order.price = props.price;
+        }
+        if(props.status !== undefined) {
+            order.status = props.status;
+        }
+        if(props.customerId !== undefined) {
+            order.customerId = props.customerId;
+        }
+        if(props.preparatorId !== undefined) {
+            order.preparatorId = props.preparatorId;
+        }
+        if(props.date !== undefined) {
+            order.date = props.date;
+        }
+        if(props.content !== undefined) {
+            order.content = props.content;
+        }
+        const res = await order.save();
+        console.log("before return");
+        return res;
+    }
+
     // Pick selectionne des champs dans le type
     public async logIn(info: Pick<UserProps, 'login' | 'password'>, platform: string): Promise<SessionDocument | null> {
         const user = await UserModel.findOne({

@@ -244,6 +244,21 @@ export class AdminController {
         }
     }
 
+    async updateOrder(req: Request, res: Response) {
+        console.log("before try");
+        try {
+            console.log("first line try");
+            const order = await AdminService.getInstance().updateOrderById(req.params.order_id, req.body);
+            if (!order) {
+                res.status(404).end();
+                return;
+            }
+            res.json(order);
+        } catch (err) {
+            res.status(400).end();
+        }
+    }
+
     async me(req: Request, res: Response) {
         res.json(req.user);
     }
@@ -272,8 +287,8 @@ export class AdminController {
         router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
         router.get('/getOrder/:order_id', this.getOrder.bind(this)); // permet d'afficher un Order
         router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
-        /*router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
-        router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
+        router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
+        /*router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
 */
         return router;
     }
