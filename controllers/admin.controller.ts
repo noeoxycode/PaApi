@@ -171,6 +171,20 @@ export class AdminController {
         }
     }
 
+    async getOrder(req: Request, res: Response) {
+        try {
+            const order = await AdminService.getInstance().getOrderById(req.params.order_id);
+            if(order === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(order);
+        } catch(err) {
+            res.status(400).end();
+            return;
+        }
+    }
+
     async getAllProduct(req: Request, res: Response) {
         const product = await AdminService.getInstance().getAllProduct();
         res.json(product);
@@ -251,8 +265,8 @@ export class AdminController {
         router.put('/updatePromo/:promo_id', express.json(), this.updatePromo.bind(this)); // permet d'update une promo
 
         router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
-        /*router.get('/getOrder/:order_id', this.getOrderById.bind(this)); // permet d'afficher un Order
-        router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
+        router.get('/getOrder/:order_id', this.getOrder.bind(this)); // permet d'afficher un Order
+        /*router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
         router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
 */

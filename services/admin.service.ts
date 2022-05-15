@@ -120,6 +120,10 @@ export class AdminService {
         return PromotionModel.findById(menuId).exec();
     }
 
+    getOrderById(orderId: string): Promise<OrderDocument | null> {
+        return OrderModel.findById(orderId).exec();
+    }
+
     async getAllProduct(): Promise<ProductDocument[]> {
         return ProductModel.find().exec();
     }
