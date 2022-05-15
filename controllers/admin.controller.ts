@@ -129,6 +129,19 @@ export class AdminController {
         }
     }
 
+    async deleteOrder(req: Request, res: Response) {
+        try {
+            const success = await AdminService.getInstance().deleteOrderById(req.params.order_id);
+            if(success) {
+                res.status(204).end();
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     async getProduct(req: Request, res: Response) {
         try {
             const product = await AdminService.getInstance().getProductById(req.params.product_id);
@@ -288,8 +301,8 @@ export class AdminController {
         router.get('/getOrder/:order_id', this.getOrder.bind(this)); // permet d'afficher un Order
         router.get('/getAllOrder', this.getAllOrder.bind(this)); // permet d'afficher tous les Orders
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
-        /*router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
-*/
+        router.delete('/deleteOrder/:order_id', this.deleteOrder.bind(this)); // permet de supp un compte Order
+
         return router;
     }
 }
