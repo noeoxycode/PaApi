@@ -4,6 +4,7 @@ config();
 import express from "express";
 import {AuthController, CoffeeController, BigBossController,AdminController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
+import {CustomerController} from "./controllers/customer.controller";
 
 async function startServer(): Promise<void> {
 
@@ -24,6 +25,8 @@ async function startServer(): Promise<void> {
    app.use('/bigboss', bigbossController.buildRoutes())
    const adminController = new AdminController();
    app.use('/admin', adminController.buildRoutes())
+   const customerController = new CustomerController;
+   app.use('/customer', customerController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);

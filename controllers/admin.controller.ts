@@ -2,6 +2,9 @@ import express, {Request, Response, Router} from "express";
 import {AuthService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {AdminService} from "../services/admin.service";
+import {OrderModel, OrderProps} from "../models/order.model";
+import {CustomerService} from "../services/customer.service";
+import {ProductModel} from "../models";
 
 export class AdminController {
 
@@ -56,7 +59,7 @@ export class AdminController {
                 promotionType: req.body.promotionType,
                 beginDate: req.body.beginDate,
                 endDate: req.body.endDate,
-                content: req.body.content
+                content: req.body.content,
             });
             res.json(promo);
         } catch(err) {
@@ -66,23 +69,40 @@ export class AdminController {
 
     async createOrder(req: Request, res: Response) {
         const order = req.body;
-        if(!order.price || !order.date || !order.status) {
+        if(!order.price || !order.date || !order.status || !order.idResto) {
             res.status(400).end(); // 400 -> bad request
             return;
         }
+        let price = await this.calculateOrderPrice(new OrderModel(req.body));
         try {
             const order = await AdminService.getInstance().createOrder({
-                price: req.body.price,
+                price: price,
                 status: req.body.status,
                 customerId: req.body.customerId,
                 preparatorId: req.body.preparatorId,
                 date: req.body.date,
-                content: req.body.content
+                content: req.body.content,
+                idResto: req.body.idResto,
+                adress: req.body.adress,
+                location: req.body.location
             });
+            console.log(order);
             res.json(order);
         } catch(err) {
             res.status(400).end();
         }
+    }
+
+    async calculateOrderPrice(order: OrderProps){
+        const orderLol = new OrderModel(order);
+        let price: number | undefined = 0;
+        let len = orderLol.content.length;
+        for (let cpt = 0; cpt < len; cpt++) {
+            let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
+            const productLol = new ProductModel(product);
+            price += productLol.price;
+        }
+        return price;
     }
 
     async getAllAdmin(req: Request, res: Response) {
