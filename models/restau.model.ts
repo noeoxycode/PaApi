@@ -27,7 +27,7 @@ const restoSchema = new Schema({
     }],
     admin: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: false
     }
 }, {
     collection: "resto",

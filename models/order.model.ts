@@ -29,6 +29,10 @@ const orderSchema = new Schema({
     status: {
         type: Schema.Types.Number,
         required: true
+    },
+    idResto: {
+        type: Schema.Types.ObjectId,
+        required: true
     }
 }, {
     collection: "order",
@@ -39,10 +43,11 @@ const orderSchema = new Schema({
 export interface OrderProps {
     price: number;
     status:string;
-    customerId:string | UserProps;
-    preparatorId:string | UserProps;
+    customerId:string;
+    preparatorId:string;
     date: Date;
     content: string[] | ProductProps[] | MenuProps[] | PromotionProps[]; //a confirmer
+    idResto: string;
 }
 
 export type OrderDocument = OrderProps & Document;

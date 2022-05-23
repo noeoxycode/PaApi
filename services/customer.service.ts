@@ -17,15 +17,15 @@ import {MenuDocument, MenuModel, MenuProps} from "../models/menu.model";
 import {PromotionDocument, PromotionModel, PromotionProps} from "../models/promotion.model";
 import {OrderDocument, OrderModel, OrderProps} from "../models/order.model";
 
-export class AdminService {
+export class CustomerService {
 
-    private static instance?: AdminService;
+    private static instance?: CustomerService;
 
-    public static getInstance(): AdminService {
-        if(AdminService.instance === undefined) {
-            AdminService.instance = new AdminService();
+    public static getInstance(): CustomerService {
+        if(CustomerService.instance === undefined) {
+            CustomerService.instance = new CustomerService();
         }
-        return AdminService.instance;
+        return CustomerService.instance;
     }
 
     private constructor() { }
@@ -49,12 +49,8 @@ export class AdminService {
     }
 
     public async createOrder(props: OrderProps): Promise<OrderDocument> {
-        console.log("coucou in create order");
         const model = new OrderModel(props);
-        console.log("coucou entre les deux lignes");
-        console.log("erwan" + model);
         const order = await model.save();
-        console.log(order);
         return order;
     }
 
@@ -65,7 +61,7 @@ export class AdminService {
         if(!user.role) {
             throw new Error('Missing role');
         }
-        if(!(user.role in Role) || user.role==="Admin"){
+        if(!(user.role in Role) || user.role==="Customer"){
             throw new Error('Bad role');
         }
         const model = new UserModel({
@@ -145,9 +141,14 @@ export class AdminService {
         return OrderModel.find().exec();
     }
 
-    async getAllAdmin(): Promise<UserDocument[]> {
-        return UserModel.find({role: "Admin"}).exec();
+    async getAllCustomer(): Promise<UserDocument[]> {
+        return UserModel.find({role: "Customer"}).exec();
     }
+
+    async getAllResto(): Promise<RestoDocument[]> {
+        return RestoModel.find().exec();
+    }
+
     async updateProductById(productId: string, props: ProductProps): Promise<ProductDocument | null> {
         const product = await this.getProductById(productId);
         if(!product) {
