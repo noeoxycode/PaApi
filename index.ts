@@ -29,7 +29,7 @@ async function startServer(): Promise<void> {
    const customerController = new CustomerController;
    app.use('/customer', customerController.buildRoutes())
    const preparatorController = new PreparatorController();
-   app.use('/preparator', customerController.buildRoutes())
+   app.use('/preparator', preparatorController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);
