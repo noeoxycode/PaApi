@@ -3,6 +3,8 @@ import {AuthService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {CustomerService} from "../services/customer.service";
 import {BigBossService} from "../services/bigboss.service";
+import {OrderModel, OrderProps} from "../models/order.model";
+import {ProductModel} from "../models";
 
 export class CustomerController {
 
@@ -67,84 +69,34 @@ export class CustomerController {
 
     async createOrder(req: Request, res: Response) {
         const order = req.body;
-        console.log(order);
-        if(!order.price || !order.date || !order.status) {
-            console.log("error nono");
+        if(!order.date || !order.status) {
             res.status(400).end(); // 400 -> bad request
             return;
         }
+        let price = await this.calculateOrderPrice(new OrderModel(req.body));
+        console.log(price);
         try {
-            console.log("coucou nono in try")
             const order = await CustomerService.getInstance().createOrder({
-                price: req.body.price,
+                price: price,
                 status: req.body.status,
                 customerId: req.body.customerId,
                 preparatorId: req.body.preparatorId,
                 date: req.body.date,
                 content: req.body.content,
-                idResto: req.body.content
+                idResto: req.body.idResto,
+                adress: req.body.adress,
+                location: req.body.location
             });
             res.json(order);
         } catch(err) {
             res.status(400).end();
         }
+        this.calculateOrderPrice(order);
     }
 
     async getAllCustomer(req: Request, res: Response) {
         const customers = await CustomerService.getInstance().getAllCustomer();
         res.json(customers);
-    }
-
-    async deleteProduct(req: Request, res: Response) {
-        try {
-            const success = await CustomerService.getInstance().deleteProductById(req.params.product_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
-            }
-        } catch(err) {
-            res.status(400).end();
-        }
-    }
-
-    async deleteMenu(req: Request, res: Response) {
-        try {
-            const success = await CustomerService.getInstance().deleteMenuById(req.params.menu_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
-            }
-        } catch(err) {
-            res.status(400).end();
-        }
-    }
-
-    async deletePromo(req: Request, res: Response) {
-        try {
-            const success = await CustomerService.getInstance().deletePromoById(req.params.promo_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
-            }
-        } catch(err) {
-            res.status(400).end();
-        }
-    }
-
-    async deleteOrder(req: Request, res: Response) {
-        try {
-            const success = await CustomerService.getInstance().deleteOrderById(req.params.order_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
-            }
-        } catch(err) {
-            res.status(400).end();
-        }
     }
 
     async getProduct(req: Request, res: Response) {
@@ -194,20 +146,6 @@ export class CustomerController {
         }
     }
 
-    async getOrder(req: Request, res: Response) {
-        try {
-            const order = await CustomerService.getInstance().getOrderById(req.params.order_id);
-            if(order === null) {
-                res.status(404).end();
-                return;
-            }
-            res.json(order);
-        } catch(err) {
-            res.status(400).end();
-            return;
-        }
-    }
-
     async getAllProduct(req: Request, res: Response) {
         const product = await CustomerService.getInstance().getAllProduct();
         res.json(product);
@@ -227,50 +165,8 @@ export class CustomerController {
         res.json(order);
     }
 
-    async updateProduct(req: Request, res: Response) {
-        try {
-            const product = await CustomerService.getInstance().updateProductById(req.params.product_id, req.body);
-            if (!product) {
-                res.status(404).end();
-                return;
-            }
-            res.json(product);
-        } catch (err) {
-            console.log("test si on catch");
-            res.status(400).end();
-        }
-    }
-
-    async updateMenu(req: Request, res: Response) {
-        try {
-            const menu = await CustomerService.getInstance().updateMenuById(req.params.menu_id, req.body);
-            if (!menu) {
-                res.status(404).end();
-                return;
-            }
-            res.json(menu);
-        } catch (err) {
-            res.status(400).end();
-        }
-    }
-
-    async updatePromo(req: Request, res: Response) {
-        try {
-            const promo = await CustomerService.getInstance().updatePromoById(req.params.promo_id, req.body);
-            if (!promo) {
-                res.status(404).end();
-                return;
-            }
-            res.json(promo);
-        } catch (err) {
-            res.status(400).end();
-        }
-    }
-
     async updateOrder(req: Request, res: Response) {
-        console.log("before try");
         try {
-            console.log("first line try");
             const order = await CustomerService.getInstance().updateOrderById(req.params.order_id, req.body);
             if (!order) {
                 res.status(404).end();
@@ -282,6 +178,18 @@ export class CustomerController {
         }
     }
 
+    async calculateOrderPrice(order: OrderProps){
+        const orderLol = new OrderModel(order);
+        let price: number | undefined = 0;
+        let len = orderLol.content.length;
+        for (let cpt = 0; cpt < len; cpt++) {
+            let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
+            const productLol = new ProductModel(product);
+            price += productLol.price;
+        }
+        return price;
+    }
+
     async me(req: Request, res: Response) {
         res.json(req.user);
     }
@@ -289,19 +197,19 @@ export class CustomerController {
     buildRoutes(): Router {
         const router = express.Router();
         router.use(checkUserConnected("Customer"));
-        router.get('/getProduct/:product_id', this.getProduct.bind(this)); // permet d'afficher un produit
-        router.get('/getAllProducts', this.getAllProduct.bind(this)); // permet d'afficher tous les produits
+        router.get('/getProduct/:product_id', this.getProduct.bind(this)); // permet d'afficher un produit  OK
+        router.get('/getAllProducts', this.getAllProduct.bind(this)); // permet d'afficher tous les produits  OK
 
-        router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un customer
-        router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les customers
+        router.get('/getMenu/:menu_id', this.getMenu.bind(this)); // permet d'afficher un customer  OK
+        router.get('/getAllMenu', this.getAllMenu.bind(this)); // permet d'afficher tous les customers  OK
 
-        router.get('/getAllPromos', this.getAllPromo.bind(this)); // permet d'afficher toutes les promos
-        router.get('/getPromo/:promo_id', this.getPromo.bind(this)); // permet d'afficher une promo
+        router.get('/getAllPromos', this.getAllPromo.bind(this)); // permet d'afficher toutes les promos  OK
+        router.get('/getPromo/:promo_id', this.getPromo.bind(this)); // permet d'afficher une promo  OK
 
-        router.get('/getAllResto', this.getAllResto.bind(this)); // permet d'afficher tous les restos
+        router.get('/getAllResto', this.getAllResto.bind(this)); // permet d'afficher tous les restos  OK
 
-        router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer un compte Order
-        router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order
+        router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer une Order  OK
+        router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order  OK
         router.get('/orderLocation/:order_id', this.updateOrder.bind(this)); // avoir la localisation de la commande
 
         return router;

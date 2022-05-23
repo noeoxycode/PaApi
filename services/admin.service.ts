@@ -49,12 +49,8 @@ export class AdminService {
     }
 
     public async createOrder(props: OrderProps): Promise<OrderDocument> {
-        console.log("coucou in create order");
         const model = new OrderModel(props);
-        console.log("coucou entre les deux lignes");
-        console.log("erwan" + model);
         const order = await model.save();
-        console.log(order);
         return order;
     }
 

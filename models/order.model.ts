@@ -33,6 +33,14 @@ const orderSchema = new Schema({
     idResto: {
         type: Schema.Types.ObjectId,
         required: true
+    },
+    adress: {
+        type: Schema.Types.String,
+        required: false
+    },
+    location: {
+        type: Schema.Types.String,
+        required: false
     }
 }, {
     collection: "order",
@@ -48,6 +56,8 @@ export interface OrderProps {
     date: Date;
     content: string[] | ProductProps[] | MenuProps[] | PromotionProps[]; //a confirmer
     idResto: string;
+    adress: string;
+    location: string;
 }
 
 export type OrderDocument = OrderProps & Document;

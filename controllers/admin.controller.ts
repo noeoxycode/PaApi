@@ -2,6 +2,9 @@ import express, {Request, Response, Router} from "express";
 import {AuthService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {AdminService} from "../services/admin.service";
+import {OrderModel, OrderProps} from "../models/order.model";
+import {CustomerService} from "../services/customer.service";
+import {ProductModel} from "../models";
 
 export class AdminController {
 
@@ -70,22 +73,36 @@ export class AdminController {
             res.status(400).end(); // 400 -> bad request
             return;
         }
+        let price = await this.calculateOrderPrice(new OrderModel(req.body));
         try {
-            console.log("coucou");
             const order = await AdminService.getInstance().createOrder({
-                price: req.body.price,
+                price: price,
                 status: req.body.status,
                 customerId: req.body.customerId,
                 preparatorId: req.body.preparatorId,
                 date: req.body.date,
                 content: req.body.content,
-                idResto: req.body.idResto
+                idResto: req.body.idResto,
+                adress: req.body.adress,
+                location: req.body.location
             });
             console.log(order);
             res.json(order);
         } catch(err) {
             res.status(400).end();
         }
+    }
+
+    async calculateOrderPrice(order: OrderProps){
+        const orderLol = new OrderModel(order);
+        let price: number | undefined = 0;
+        let len = orderLol.content.length;
+        for (let cpt = 0; cpt < len; cpt++) {
+            let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
+            const productLol = new ProductModel(product);
+            price += productLol.price;
+        }
+        return price;
     }
 
     async getAllAdmin(req: Request, res: Response) {

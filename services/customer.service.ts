@@ -218,16 +218,12 @@ export class CustomerService {
     }
 
     async updateOrderById(orderId: string, props: OrderProps): Promise<OrderDocument | null> {
-        console.log("in update before get by id");
         const order = await this.getOrderById(orderId);
-        console.log("order after getbyid ", order);
-        console.log("order in props ", props);
         if(!order) {
             return null;
         }
-        if(props.price !== undefined) {
-            order.price = props.price;
-        }
+        let price = await this.calculateOrderPrice(new OrderModel(props));
+        order.price = price;
         if(props.status !== undefined) {
             order.status = props.status;
         }
@@ -246,6 +242,18 @@ export class CustomerService {
         const res = await order.save();
         console.log("before return");
         return res;
+    }
+
+    async calculateOrderPrice(order: OrderProps){
+        const orderLol = new OrderModel(order);
+        let price: number | undefined = 0;
+        let len = orderLol.content.length;
+        for (let cpt = 0; cpt < len; cpt++) {
+            let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
+            const productLol = new ProductModel(product);
+            price += productLol.price;
+        }
+        return price;
     }
 
     // Pick selectionne des champs dans le type
@@ -279,4 +287,5 @@ export class CustomerService {
         }).populate("user").exec();
         return session ? session.user as UserProps : null;
     }
+
 }
