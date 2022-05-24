@@ -6,6 +6,7 @@ import {AuthController, CoffeeController, BigBossController,AdminController} fro
 import mongoose, {Mongoose} from "mongoose";
 import {CustomerController} from "./controllers/customer.controller";
 import {PreparatorController} from "./controllers/preparator.controller";
+import {DeliverController} from "./controllers/deliver.controller";
 
 async function startServer(): Promise<void> {
 
@@ -30,6 +31,8 @@ async function startServer(): Promise<void> {
    app.use('/customer', customerController.buildRoutes())
    const preparatorController = new PreparatorController();
    app.use('/preparator', preparatorController.buildRoutes())
+   const deliverController = new DeliverController();
+   app.use('/deliver', deliverController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);

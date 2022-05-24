@@ -6,13 +6,11 @@ import {BigBossService} from "../services/bigboss.service";
 export class BigBossController {
 
     async createResto(req: Request, res: Response) {
-        console.log("begening create resto");
         const resto = req.body;
         if(!resto.name || !resto.adress || !resto.admin) {
             res.status(400).end(); // 400 -> bad request
             return;
         }
-        console.log("before try");
         try {
             const user = await BigBossService.getInstance().createResto({
                 name: req.body.name,

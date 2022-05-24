@@ -16,16 +16,18 @@ import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 import {MenuDocument, MenuModel, MenuProps} from "../models/menu.model";
 import {PromotionDocument, PromotionModel, PromotionProps} from "../models/promotion.model";
 import {OrderDocument, OrderModel, OrderProps} from "../models/order.model";
+import {ConversationDocument, ConversationModel, ConversationProps} from "../models/conversation.model";
+import {MessageDocument, MessageModel, MessageProps} from "../models/message.model";
 
-export class PreparatorService {
+export class DeliverService {
 
-    private static instance?: PreparatorService;
+    private static instance?: DeliverService;
 
-    public static getInstance(): PreparatorService {
-        if(PreparatorService.instance === undefined) {
-            PreparatorService.instance = new PreparatorService();
+    public static getInstance(): DeliverService {
+        if(DeliverService.instance === undefined) {
+            DeliverService.instance = new DeliverService();
         }
-        return PreparatorService.instance;
+        return DeliverService.instance;
     }
 
     private constructor() { }
@@ -50,20 +52,7 @@ export class PreparatorService {
         if(props.status !== undefined) {
             order.status = props.status;
         }
-        if(props.customerId !== undefined) {
-            order.customerId = props.customerId;
-        }
-        if(props.preparatorId !== undefined) {
-            order.preparatorId = props.preparatorId;
-        }
-        if(props.date !== undefined) {
-            order.date = props.date;
-        }
-        if(props.content !== undefined) {
-            order.content = props.content;
-        }
         const res = await order.save();
-        console.log("before return");
         return res;
     }
 
@@ -72,7 +61,7 @@ export class PreparatorService {
         let price: number | undefined = 0;
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
-            let product = await PreparatorService.getInstance().getProductById(order.content[cpt].toString());
+            let product = await DeliverService.getInstance().getProductById(order.content[cpt].toString());
             const productLol = new ProductModel(product);
             price += productLol.price;
         }
@@ -113,6 +102,52 @@ export class PreparatorService {
             }
         }).populate("user").exec();
         return session ? session.user as UserProps : null;
+    }
+
+    async getConversationByIdCustomerAndDeliver(customerId: string, deliverId: string): Promise<ConversationDocument| null> {
+        return ConversationModel.findOne({
+            customerId: customerId,
+            deliverId: deliverId
+        }).exec();
+    }
+
+    async getConversationById(convId: string): Promise<ConversationDocument| null> {
+        return ConversationModel.findById(convId).exec();
+    }
+
+    async postMessage(props: MessageProps): Promise<MessageDocument| null> {
+        const model = new MessageModel(props);
+        const message = await model.save();
+        return message;
+    }
+
+    async createConversation(props: ConversationProps): Promise<ConversationDocument | null> {
+        const model = new ConversationModel(props);
+        const conv = await model.save();
+        return conv;
+    }
+
+    async updateConversationFirstMessage(convId: string, messageId: string): Promise<ConversationDocument | null> {
+        const conv = await this.getConversationById(convId);
+        if(!conv) {
+            return null
+        }
+        conv.messages = [messageId];
+        console.log("first message " + conv.messages);
+        const res = await conv.save();
+        return res;
+    }
+
+    async addMessage(convId: string, messageId: string): Promise<ConversationDocument | null> {
+        const conv = await this.getConversationById(convId);
+        console.log("conv id " + convId);
+        if(!conv) {
+            return null
+        }
+        conv.messages.push(messageId);
+        console.log("add message " + conv.messages);
+        const res = await conv.save();
+        return res;
     }
 
 }
