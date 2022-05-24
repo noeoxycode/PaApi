@@ -5,6 +5,8 @@ import {CustomerService} from "../services/customer.service";
 import {BigBossService} from "../services/bigboss.service";
 import {OrderModel, OrderProps} from "../models/order.model";
 import {ProductModel} from "../models";
+import {ConversationModel} from "../models/conversation.model";
+import {DeliverService} from "../services/deliver.service";
 
 export class CustomerController {
 
@@ -178,6 +180,75 @@ export class CustomerController {
         }
     }
 
+    async sendMessage(req: Request, res: Response){
+        const message = req.body;
+        if(!message.content || !message.idExpediteur || !message.sentDate) {
+            res.status(111).end(); // 400 -> bad request
+            return;
+        }
+        try {
+            let conversation = new ConversationModel(await DeliverService.getInstance().getConversationByIdCustomerAndDeliver(req.params.customer_id, req.params.deliver_id));
+            if(conversation.id != undefined && conversation.customerId != undefined && conversation.deliverId != undefined){
+                try {
+                    const message = await DeliverService.getInstance().postMessage({
+                        idExpediteur: req.body.idExpediteur,
+                        content: req.body.content,
+                        sentDate: req.body.sentDate,
+                        idConversation: conversation.id.toString()
+                    });
+                    let idMessage = message?.id;
+                    console.log("id message " + idMessage);
+                    console.log("id conv " + conversation.id);
+                    let updatedNewConv =await DeliverService.getInstance().addMessage(conversation.id, idMessage);
+                    res.json(message);
+                } catch(err) {
+                    res.status(222).end();
+                }
+            }
+            else {
+                try {
+                    console.log("coucou");
+                    let conversation = await DeliverService.getInstance().createConversation({
+                        customerId: req.params.customer_id,
+                        deliverId: req.params.deliver_id,
+                        createdDate: req.body.sentDate,
+                        messages: ["000000000000000000000000"]
+                    });
+                    res.json(conversation);
+                    let newConv = await DeliverService.getInstance().getConversationByIdCustomerAndDeliver(req.params.customer_id, req.params.deliver_id)
+                    let idNewConv = newConv?.id;
+                    const message = await DeliverService.getInstance().postMessage({
+                        idExpediteur: req.body.idExpediteur,
+                        content: req.body.content,
+                        sentDate: req.body.sentDate,
+                        idConversation: idNewConv
+                    });
+                    let idMessage = message?.id;
+                    let updatedNewConv =await DeliverService.getInstance().updateConversationFirstMessage(idNewConv, idMessage);
+                    res.json(message);
+
+                }
+                catch(err) {
+                    res.status(333).end();
+                }
+            }
+        }
+        catch(err) {
+            res.status(444).end();
+        }
+        try {
+            const conv = await DeliverService.getInstance().getConversationByIdCustomerAndDeliver(req.params.customer_id, req.params.deliver_id);
+            if(conv === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(conv);
+        } catch(err) {
+            res.status(124).end();
+            return;
+        }
+    }
+
     async calculateOrderPrice(order: OrderProps){
         const orderLol = new OrderModel(order);
         let price: number | undefined = 0;
@@ -211,6 +282,8 @@ export class CustomerController {
         router.post('/newOrder', express.json(), this.createOrder.bind(this)); // permet de creer une Order  OK
         router.put('/updateOrder/:order_id', express.json(), this.updateOrder.bind(this)); // update Order  OK
         router.get('/orderLocation/:order_id', this.updateOrder.bind(this)); // avoir la localisation de la commande
+
+        router.post('/postMessage/:customer_id/:deliver_id', express.json(), this.sendMessage.bind(this));
 
         return router;
     }
