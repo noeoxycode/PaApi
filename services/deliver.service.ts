@@ -115,6 +115,10 @@ export class DeliverService {
         return ConversationModel.findById(convId).exec();
     }
 
+    async getMessageById(msgId: string): Promise<MessageDocument| null> {
+        return MessageModel.findById(msgId).exec();
+    }
+
     async postMessage(props: MessageProps): Promise<MessageDocument| null> {
         const model = new MessageModel(props);
         const message = await model.save();
@@ -140,13 +144,18 @@ export class DeliverService {
 
     async addMessage(convId: string, messageId: string): Promise<ConversationDocument | null> {
         const conv = await this.getConversationById(convId);
-        console.log("conv id " + convId);
-        if(!conv) {
-            return null
-        }
-        conv.messages.push(messageId);
-        console.log("add message " + conv.messages);
-        const res = await conv.save();
+        console.log("message id : " + messageId);
+        const newConv = new ConversationModel(conv)
+        console.log(newConv);
+        console.log("add message " + newConv.messages);
+        const newMsg = await this.getMessageById(messageId);
+        console.log("newmsg : " + newMsg);
+        const newMsgModel = new MessageModel(newMsg);
+        console.log("newmsgmodel : " + newMsgModel);
+        newConv.messages.push(newMsgModel.id);
+        console.log("newconv msgs : " + newConv.messages);
+        console.log("add message " + newConv.messages);
+        const res = await newConv.save();
         return res;
     }
 

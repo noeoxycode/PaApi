@@ -74,6 +74,7 @@ export class DeliverController {
                     });
                     let idMessage = message?.id;
                     console.log("id message " + idMessage);
+                    console.log("id conv " + conversation.id);
                     let updatedNewConv =await DeliverService.getInstance().addMessage(conversation.id, idMessage);
                     res.json(message);
                 } catch(err) {
@@ -111,14 +112,6 @@ export class DeliverController {
             catch(err) {
                 res.status(444).end();
         }
-
-
-
-
-
-
-
-
         try {
             const conv = await DeliverService.getInstance().getConversationByIdCustomerAndDeliver(req.params.customer_id, req.params.deliver_id);
             if(conv === null) {
@@ -127,7 +120,7 @@ export class DeliverController {
             }
             res.json(conv);
         } catch(err) {
-            res.status(400).end();
+            res.status(124).end();
             return;
         }
     }

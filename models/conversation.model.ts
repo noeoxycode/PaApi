@@ -15,10 +15,10 @@ const conversationSchema = new Schema({
         type: Schema.Types.Date,
         required: true,
     },
-    messages: {
+    messages: [{
         type: Schema.Types.ObjectId,
         required: false
-    }
+    }]
 }, {
     collection: "conversations",
     timestamps: true,
@@ -29,7 +29,7 @@ export interface ConversationProps {
     customerId: string | UserProps;
     deliverId: string | UserProps;
     createdDate: Date;
-    messages: string[];
+    messages: string[] | MessageProps[];
 }
 
 export type ConversationDocument = ConversationProps & Document;
