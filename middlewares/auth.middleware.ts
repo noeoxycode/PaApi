@@ -9,6 +9,7 @@ declare module 'express' {
 }
 
 function userAcces(role:string,user:UserProps){
+    console.log("role : " + role + " user.role : " + user.role);
     if(role===""){return true;}
     if(role==="BigBoss"&&user.role==="BigBoss"){
         return true;
@@ -32,15 +33,18 @@ export function checkUserConnected(role:string): RequestHandler {
                     next) {
         const authorization = req.headers['authorization'];
         if(authorization === undefined) {
+            console.log("1");
             res.status(401).end();
             return;
         }
         const parts = authorization.split(" ");
         if(parts.length !== 2) {
+            console.log("2");
             res.status(401).end();
             return;
         }
         if(parts[0] !== 'Bearer') {
+            console.log("3");
             res.status(401).end();
             return;
         }
@@ -52,12 +56,14 @@ export function checkUserConnected(role:string): RequestHandler {
                 return;
             }
             if(!userAcces(role,user)){
+                console.log("14");
                 res.status(401).end();
                 return;
             }
             req.user = user;
             next();
         } catch(err) {
+            console.log("5");
             res.status(401).end();
         }
     }
