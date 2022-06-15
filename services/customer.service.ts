@@ -1,12 +1,11 @@
 import {
     possibleRole,
-    ProductDocument,
-    ProductModel,
-    ProductProps,
+    IngredientModel,
+    IngredientProps,
     Role,
     UserDocument,
     UserModel,
-    UserProps
+    UserProps, IngredientDocument
 } from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
@@ -30,8 +29,8 @@ export class CustomerService {
 
     private constructor() { }
 
-    public async createProduct(props: ProductProps): Promise<ProductDocument> {
-        const model = new ProductModel(props);
+    public async createProduct(props: IngredientProps): Promise<IngredientDocument> {
+        const model = new IngredientModel(props);
         const product = await model.save();
         return product;
     }
@@ -74,7 +73,7 @@ export class CustomerService {
     }
 
     async deleteProductById(product_id: string): Promise<boolean> {
-        const res = await ProductModel.deleteOne({_id: product_id}).exec();
+        const res = await IngredientModel.deleteOne({_id: product_id}).exec();
         return res.deletedCount === 1;
     }
 
@@ -109,8 +108,8 @@ export class CustomerService {
         }
 
     }
-    async getProductById(productId: string): Promise<ProductDocument | null> {
-        return ProductModel.findById(productId).exec();
+    async getProductById(productId: string): Promise<IngredientDocument | null> {
+        return IngredientModel.findById(productId).exec();
     }
 
     getMenuById(menuId: string): Promise<MenuDocument | null> {
@@ -125,8 +124,8 @@ export class CustomerService {
         return OrderModel.findById(orderId).exec();
     }
 
-    async getAllProduct(): Promise<ProductDocument[]> {
-        return ProductModel.find().exec();
+    async getAllProduct(): Promise<IngredientDocument[]> {
+        return IngredientModel.find().exec();
     }
 
     async getAllMenu(): Promise<MenuDocument[]> {
@@ -149,7 +148,7 @@ export class CustomerService {
         return RestoModel.find().exec();
     }
 
-    async updateProductById(productId: string, props: ProductProps): Promise<ProductDocument | null> {
+    async updateProductById(productId: string, props: IngredientProps): Promise<IngredientDocument | null> {
         const product = await this.getProductById(productId);
         if(!product) {
             return null;
@@ -250,7 +249,7 @@ export class CustomerService {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;

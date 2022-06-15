@@ -1,5 +1,5 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
-import {ProductModel, ProductProps} from "./product.model";
+import {IngredientModel, IngredientProps} from "./ingredient.model";
 import {MenuModel, MenuProps} from "./menu.model";
 import {PromotionModel, PromotionProps} from "./promotion.model";
 import {UserProps, UserModel} from "./user.model";
@@ -40,7 +40,7 @@ export interface RestoProps {
     adress: string;
     menu: string[] | MenuProps[];
     promotion: string[] | PromotionProps[];
-    product: string[] | ProductProps[];
+    product: string[] | IngredientProps[];
     admin: string | UserProps;
 }
 

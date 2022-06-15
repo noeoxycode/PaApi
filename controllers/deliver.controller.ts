@@ -4,7 +4,7 @@ import {checkUserConnected} from "../middlewares";
 import {DeliverService} from "../services/deliver.service";
 import {BigBossService} from "../services/bigboss.service";
 import {OrderModel, OrderProps} from "../models/order.model";
-import {ProductModel} from "../models";
+import {IngredientModel} from "../models";
 import {ConversationModel} from "../models/conversation.model";
 
 export class DeliverController {
@@ -46,7 +46,7 @@ export class DeliverController {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await DeliverService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;

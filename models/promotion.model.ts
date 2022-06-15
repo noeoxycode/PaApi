@@ -1,5 +1,5 @@
  import mongoose, {Schema, Document, Model} from "mongoose";
-import {ProductModel, ProductProps} from "./product.model";
+import {IngredientModel, IngredientProps} from "./ingredient.model";
 import {MenuModel, MenuProps} from "./menu.model";
 
 const promotionSchema = new Schema({
@@ -40,7 +40,7 @@ export interface PromotionProps {
     promotionType: string;
     beginDate: Date;
     endDate: Date;
-    content: string[] | ProductProps[] | MenuProps[]; //a confirmer
+    content: string[] | IngredientProps[] | MenuProps[]; //a confirmer
 }
 
 export type PromotionDocument = PromotionProps & Document;
