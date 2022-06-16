@@ -27,27 +27,27 @@ const userSchema = new Schema({
     },
     role: {
         type:Schema.Types.String,
-        required: true
+        required: false
     },
     name: {
         type: Schema.Types.String,
-        required: true
+        required: false
     },
     surname: {
         type: Schema.Types.String,
-        required: true
+        required: false
     },
     birthdate: {
         type: Schema.Types.Date,
-        required: true
+        required: false
     },
     adress: {
         type: adressSchema,
-        required: true
+        required: false
     },
     email: {
         type: Schema.Types.String,
-        required: true
+        required: false
     },
     sessions: [{
         type: Schema.Types.ObjectId,
