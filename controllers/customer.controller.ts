@@ -4,7 +4,7 @@ import {checkUserConnected} from "../middlewares";
 import {CustomerService} from "../services/customer.service";
 import {BigBossService} from "../services/bigboss.service";
 import {OrderModel, OrderProps} from "../models/order.model";
-import {ProductModel} from "../models";
+import {IngredientModel} from "../models";
 import {ConversationModel} from "../models/conversation.model";
 import {DeliverService} from "../services/deliver.service";
 
@@ -19,9 +19,10 @@ export class CustomerController {
         try {
             const product = await CustomerService.getInstance().createProduct({
                 name: req.body.name,
+                photo: req.body.photo,
                 price: req.body.price,
-                type: req.body.type,
                 description: req.body.description,
+                type: req.body.type,
             });
             res.json(product);
         } catch(err) {
@@ -255,7 +256,7 @@ export class CustomerController {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;

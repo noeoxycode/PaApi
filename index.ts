@@ -7,6 +7,7 @@ import mongoose, {Mongoose} from "mongoose";
 import {CustomerController} from "./controllers/customer.controller";
 import {PreparatorController} from "./controllers/preparator.controller";
 import {DeliverController} from "./controllers/deliver.controller";
+import {CartController} from "./controllers/cart.controller";
 
 async function startServer(): Promise<void> {
 
@@ -33,6 +34,8 @@ async function startServer(): Promise<void> {
    app.use('/preparator', preparatorController.buildRoutes())
    const deliverController = new DeliverController();
    app.use('/deliver', deliverController.buildRoutes())
+   const cartController = new CartController();
+   app.use('/cart', cartController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);

@@ -1,5 +1,5 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
-import {ProductModel, ProductProps} from "./product.model";
+import {IngredientModel, IngredientProps} from "./ingredient.model";
 
 const menuSchema = new Schema({
     name: {
@@ -30,7 +30,7 @@ export interface MenuProps {
     name: string;
     price: number;
     description: string;
-    content: string[] | ProductProps[];
+    content: string[] | IngredientProps[];
 }
 
 export type MenuDocument = MenuProps & Document;

@@ -76,7 +76,7 @@ export class BigBossService {
         return RestoModel.find().exec();
     }
 
-    async affectRestoToAdmin(restoId: string,adminId: string): Promise<UserDocument | null> {
+   /* async affectRestoToAdmin(restoId: string,adminId: string): Promise<UserDocument | null> {
         const resto = await this.getRestoById(restoId);
         const admin = await this.getuserByIdAndRole(adminId,"Admin");
         if(!admin || !resto) {
@@ -88,7 +88,7 @@ export class BigBossService {
         const res = await admin.save();
         return res;
 
-    }
+    }*/
 
     async swapBoss(pastBoss: UserProps,newBoss: string){
         const newB = await this.getuserByIdAndRole(newBoss,"Admin");
@@ -108,7 +108,7 @@ export class BigBossService {
         return {res1,res2};
     }
 
-    async updateAdminById(adminId: string, props: Partial<UserProps>): Promise<UserDocument | null> {
+  /*  async updateAdminById(adminId: string, props: Partial<UserProps>): Promise<UserDocument | null> {
         const admin = await this.getuserByIdAndRole(adminId,"Admin");
         if (!admin) {
             return null;
@@ -128,7 +128,7 @@ export class BigBossService {
         const res = await admin.save();
         return res;
 
-    }
+    }*/
     async getAllAdmin(): Promise<UserDocument[]> {
         return UserModel.find({role: "Admin"}).exec();
     }

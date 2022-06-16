@@ -1,20 +1,23 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {SessionProps} from "./session.model";
 import {RestoProps} from "./restau.model";
+import {adressSchema, AdressProps} from "./adress.model";
+import {RecipeProps} from "./recipe.models";
+import {IngredientProps} from "./ingredient.model";
+import {OrderProps} from "./order.model";
+import {ToolProps} from "./tools.model";
 
 export const possibleRole:{[status:string]:string;}={
     "BigBoss":'BigBoss',
     "Admin": 'Admin',
     "Customer": 'Customer',
-    "Preparator": 'Preparator',
-    "Livreur": 'Livreur'
+    "Assistant": 'Assistant'
 }
 export enum Role {
     BigBoss,
     Admin,
     Customer,
-    Preparator,
-    Livreur
+    Assistant
 }
 
 const userSchema = new Schema({
@@ -29,17 +32,72 @@ const userSchema = new Schema({
     },
     role: {
         type:Schema.Types.String,
-        required: true
+        required: false
     },
-    restaurant: {
-        type: Schema.Types.ObjectId,
+    name: {
+        type: Schema.Types.String,
+        required: false
+    },
+    surname: {
+        type: Schema.Types.String,
+        required: false
+    },
+    birthdate: {
+        type: Schema.Types.Date,
+        required: false
+    },
+    adress: {
+        type: adressSchema,
+        required: false
+    },
+    email: {
+        type: Schema.Types.String,
         required: false
     },
     sessions: [{
         type: Schema.Types.ObjectId,
         ref: "Session"
-    }]
-}, {
+    }],
+    cart: [{
+        type: Schema.Types.ObjectId,
+        ref: "Cart"
+    }],
+    wishlist: [{
+        type: Schema.Types.ObjectId,
+        ref: "Wishlist"
+    }],
+    favorite: [{
+        type: Schema.Types.ObjectId,
+        ref: "Favorite"
+    }],
+    stock: [[{
+                type: Schema.Types.ObjectId,
+                ref: "Ingredient"
+            }],
+                [{type: Schema.Types.Number,
+                ref: "Quantity"}]
+    ],
+    history: [{
+        type: Schema.Types.ObjectId,
+        ref: "Order"
+    }],
+    material: [{
+        type: Schema.Types.ObjectId,
+        ref: "Tools"
+    }],
+    orderInProgress: [{
+        type: Schema.Types.ObjectId,
+        ref: "OrderInProgress"
+    }],
+    linkedProfiles: [{
+        type: Schema.Types.ObjectId,
+        ref: "Linked profile"
+    }],
+    photo: [{
+        type: Schema.Types.String,
+        ref: "Profile photo"
+    }],
+    }, {
     collection: "users",
     timestamps: true,
     versionKey: false
@@ -47,10 +105,23 @@ const userSchema = new Schema({
 
 export interface UserProps {
     login: string;
-    restaurant: string | RestoProps;
-    role: string;
     password: string;
+    role: string;
+    name: string;
+    surname: string;
+    birthDate: Date;
+    adress: AdressProps;
+    email: string;
     sessions: string[] | SessionProps[];
+    cart: string[] | RecipeProps[];
+    wishlist: string[] | RecipeProps[];
+    favorite: string[] | RecipeProps[];
+    stock: [string[] | IngredientProps[], number];
+    history: OrderProps[];
+    material: ToolProps[];
+    orderinProgress: [OrderProps];
+    linkedProfiles: [string | UserProps];
+    photo: string;
 }
 
 export type UserDocument = UserProps & Document;

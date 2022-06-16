@@ -4,7 +4,7 @@ import {checkUserConnected} from "../middlewares";
 import {AdminService} from "../services/admin.service";
 import {OrderModel, OrderProps} from "../models/order.model";
 import {CustomerService} from "../services/customer.service";
-import {ProductModel} from "../models";
+import {IngredientModel} from "../models";
 
 export class AdminController {
 
@@ -17,9 +17,10 @@ export class AdminController {
         try {
             const product = await AdminService.getInstance().createProduct({
                 name: req.body.name,
+                photo: req.body.photo,
                 price: req.body.price,
-                type: req.body.type,
                 description: req.body.description,
+                type: req.body.type,
             });
             res.json(product);
         } catch(err) {
@@ -99,7 +100,7 @@ export class AdminController {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await CustomerService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;

@@ -1,6 +1,6 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 
-const productStat:{[status:string]:string}={
+const ingredientStat:{[status:string]:string}={
     "burger":'burger',
     "dessert": 'dessert',
     "accompagnement": "accompagnement",
@@ -10,8 +10,12 @@ const productStat:{[status:string]:string}={
     "healty": "nouriture saine"
 }
 
-const productSchema = new Schema({
+const ingredientSchema = new Schema({
    name: {
+       type: Schema.Types.String,
+       required: true
+   },
+    photo: {
        type: Schema.Types.String,
        required: true
    },
@@ -20,27 +24,28 @@ const productSchema = new Schema({
         required: true,
         min: 0
     },
-    type: [{
+    type: {
         type: Schema.Types.String,
         required: true
-    }],
+    },
     description: {
         type: Schema.Types.String,
         required: true
     },
 }, {
-    collection: "product",
+    collection: "ingredient",
     timestamps: true,
     versionKey: false
 });
 
-export interface ProductProps {
+export interface IngredientProps {
     name: string;
+    photo: string;
     price: number;
     description: string;
     type:string;
 }
 
-export type ProductDocument = ProductProps & Document;
+export type IngredientDocument = IngredientProps & Document;
 
-export const ProductModel: Model<ProductDocument> = mongoose.model<ProductDocument>("Product", productSchema);
+export const IngredientModel: Model<IngredientDocument> = mongoose.model<IngredientDocument>("Ingredient", ingredientSchema);

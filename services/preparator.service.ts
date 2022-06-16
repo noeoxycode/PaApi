@@ -1,12 +1,10 @@
 import {
     possibleRole,
-    ProductDocument,
-    ProductModel,
-    ProductProps,
+    IngredientModel,
     Role,
     UserDocument,
     UserModel,
-    UserProps
+    UserProps, IngredientDocument
 } from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
@@ -73,14 +71,14 @@ export class PreparatorService {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await PreparatorService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;
     }
 
-    async getProductById(productId: string): Promise<ProductDocument | null> {
-        return ProductModel.findById(productId).exec();
+    async getProductById(productId: string): Promise<IngredientDocument | null> {
+        return IngredientModel.findById(productId).exec();
     }
 
     // Pick selectionne des champs dans le type

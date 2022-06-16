@@ -37,7 +37,6 @@ export class BigBossController {
                 login: req.body.login,
                 password: req.body.password,
                 role: req.body.role,
-                restaurant: req.body.restaurant
             });
             res.json(user);
         } catch(err) {
@@ -57,7 +56,7 @@ export class BigBossController {
             res.status(400).end();
         }
     }
-
+/*
     async restoToAdmin(req: Request, res: Response) {
         if(!req.body.resto_id || !req.body.admin_id) {
             res.status(400).end(); // 400 -> bad request
@@ -87,7 +86,7 @@ export class BigBossController {
             res.status(400).end();
         }
     }
-
+*/
     async getAdminById(req: Request, res: Response) {
         try {
             const admin = await BigBossService.getInstance().getuserByIdAndRole(req.params.admin_id,"Admin");
@@ -180,10 +179,10 @@ export class BigBossController {
         router.post('/subscribeAdmin', express.json(), this.createAdmin.bind(this)); // permet de creer un compte admin
         router.get('/getAdmin/:admin_id', this.getAdminById.bind(this)); // permet d'afficher un admin
         router.get('/getAllAdmin', this.getAllAdmin.bind(this)); // permet d'afficher tous les admins
-        router.put('/updateAdmin/:admin_id', express.json(), this.updateAdmin.bind(this)); // update admin
+        //router.put('/updateAdmin/:admin_id', express.json(), this.updateAdmin.bind(this)); // update admin
         router.delete('/deleteAdmin/:admin_id', this.deleteAdmin.bind(this)); // permet de supp un compte admin
 
-        router.put('/affectAdminToResto', express.json(), this.restoToAdmin.bind(this)); // affecte un admin a un resto
+        //router.put('/affectAdminToResto', express.json(), this.restoToAdmin.bind(this)); // affecte un admin a un resto
 
         router.get('/whoAmI', this.me.bind(this)); // who am i
 

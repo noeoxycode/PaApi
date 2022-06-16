@@ -4,7 +4,7 @@ import {checkUserConnected} from "../middlewares";
 import {PreparatorService} from "../services/preparator.service";
 import {BigBossService} from "../services/bigboss.service";
 import {OrderModel, OrderProps} from "../models/order.model";
-import {ProductModel} from "../models";
+import {IngredientModel} from "../models";
 
 export class PreparatorController {
     async getOrder(req: Request, res: Response) {
@@ -45,7 +45,7 @@ export class PreparatorController {
         let len = orderLol.content.length;
         for (let cpt = 0; cpt < len; cpt++) {
             let product = await PreparatorService.getInstance().getProductById(order.content[cpt].toString());
-            const productLol = new ProductModel(product);
+            const productLol = new IngredientModel(product);
             price += productLol.price;
         }
         return price;

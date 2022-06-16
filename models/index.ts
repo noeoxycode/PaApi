@@ -1,2 +1,2 @@
-export * from './product.model'
+export * from './ingredient.model'
 export * from './user.model'
