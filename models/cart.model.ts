@@ -4,13 +4,15 @@ import {RecipeProps} from "./recipe.models";
 import {UserProps} from "./user.model";
 
 const cartSchema = new Schema({
-    content: [[{
+    content: [{
         type: Schema.Types.ObjectId,
         ref: "Recipe"
-    }],
-        [{type: Schema.Types.Number,
-            ref: "Quantity"}]
-    ],
+    },
+    {
+        type: Schema.Types.Number,
+        ref: "Quantity"
+    }]
+    ,
     deliveryDate: {
         type: Schema.Types.Date,
         required: false
@@ -38,7 +40,7 @@ const cartSchema = new Schema({
 });
 
 export interface CartProps {
-    content: [string[] | RecipeProps[], number];
+    content: [string | RecipeProps, number];
     deliveryDate:Date;
     customerId:string|UserProps;
     assistantId:string|UserProps;

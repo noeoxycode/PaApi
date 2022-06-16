@@ -1,6 +1,7 @@
 import express, {Router, Request, Response} from "express";
 import {CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
+import {CartService} from "../services/cart.service";
 
 export class CartController {
 
@@ -56,15 +57,15 @@ export class CartController {
         }
     }
 
-    async updateCoffee(req: Request, res: Response) {
+    async updateCart(req: Request, res: Response) {
         try {
-            const coffee = await CoffeeService.getInstance()
-                .updateById(req.params.coffee_id, req.body);
-            if(!coffee) {
+            const cart = await CartService.getInstance()
+                .addItem(req.params.userId, req.body.content[0][0], req.body.content[1][0]);
+            if(!cart) {
                 res.status(404).end();
                 return;
             }
-            res.json(coffee);
+            res.json(cart);
         } catch (err) {
             res.status(400).end();
         }
@@ -78,7 +79,7 @@ export class CartController {
         router.get('/', this.getAllCoffees.bind(this));
         router.get('/:coffee_id', this.getCoffee.bind(this));
         router.delete('/:coffee_id', this.deleteCoffee.bind(this));
-        router.put('/:coffee_id', express.json(), this.updateCoffee.bind(this));
+        router.put('/:user_id', express.json(), this.updateCart.bind(this));
         return router;
     }
 }
