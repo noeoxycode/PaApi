@@ -11,16 +11,19 @@ declare module 'express' {
 function userAcces(role:string,user:UserProps){
     console.log("role : " + role + " user.role : " + user.role);
     if(role===""){return true;}
-    if(role==="BigBoss"&&user.role==="BigBoss"){
+    if(user.role===""||user.role===undefined){return false;}
+    if(role==="Customer"){
         return true;
-    }else if(role==="Admin"&&user.role==="Admin"){
-        return true;
-    }else if(role==="Customer"&&user.role==="Customer"){
-        return true;
-    }else if(role==="Preparator"&&user.role==="Preparator"){
-        return true;
-    }else if(role==="Livreur"&&user.role==="Livreur"){
-        return true;
+    }else if(role==="Assistant"){
+        return user.role !== "Customer";
+    }else if(role==="Admin"){
+        if(user.role==="Admin"||user.role==="BigBoss"){
+            return true;
+        }else{
+            return false;
+        }
+    }else if(role==="BigBoss"){
+        return user.role === "BigBoss";
     }else{
         return false;
     }

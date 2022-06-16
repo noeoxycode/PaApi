@@ -15,15 +15,19 @@ const ingredientSchema = new Schema({
        type: Schema.Types.String,
        required: true
    },
+    photo: {
+       type: Schema.Types.String,
+       required: true
+   },
     price: {
         type: Schema.Types.Number,
         required: true,
         min: 0
     },
-    type: [{
+    type: {
         type: Schema.Types.String,
         required: true
-    }],
+    },
     description: {
         type: Schema.Types.String,
         required: true
@@ -36,6 +40,7 @@ const ingredientSchema = new Schema({
 
 export interface IngredientProps {
     name: string;
+    photo: string;
     price: number;
     description: string;
     type:string;

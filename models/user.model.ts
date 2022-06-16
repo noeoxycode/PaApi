@@ -1,6 +1,11 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {SessionProps} from "./session.model";
 import {RestoProps} from "./restau.model";
+import {adressSchema, AdressProps} from "./adress.model";
+import {RecipeProps} from "./recipe.models";
+import {IngredientProps} from "./ingredient.model";
+import {OrderProps} from "./order.model";
+import {ToolProps} from "./tools.model";
 
 export const possibleRole:{[status:string]:string;}={
     "BigBoss":'BigBoss',
