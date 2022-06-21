@@ -57,7 +57,7 @@ export class CartController {
         }
     }
 
-    async updateCart(req: Request, res: Response) {
+    async addRecipeToCart(req: Request, res: Response) {
         try {
             const cart = await CartService.getInstance()
                 .addItem(req.params.userId, req.body.content[0][0], req.body.content[1][0]);
@@ -79,7 +79,7 @@ export class CartController {
         router.get('/', this.getAllCoffees.bind(this));
         router.get('/:coffee_id', this.getCoffee.bind(this));
         router.delete('/:coffee_id', this.deleteCoffee.bind(this));
-        router.put('/:user_id', express.json(), this.updateCart.bind(this));
+        router.put('/addToCart', express.json(), this.addRecipeToCart.bind(this));
         return router;
     }
 }

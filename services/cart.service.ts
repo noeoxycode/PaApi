@@ -41,7 +41,6 @@ export class CartService {
         }
         const tmp = await this.getRecipeById(recipeId)
         if(tmp !== undefined) {
-            const newItem: [string, number] = [recipeId, number];
             cart.content.push(recipeId, number);
         }
         const res = await cart.save();
