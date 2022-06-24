@@ -57,16 +57,17 @@ export class CartController {
         }
     }
 
-    async updateCart(req: Request, res: Response) {
+    async addItemToCart(req: Request, res: Response) {
         try {
             const cart = await CartService.getInstance()
-                .addItem(req.params.userId, req.body.content[0][0], req.body.content[1][0]);
+                .addItem(req.params.user_id, req.body.content[0], req.body.content[1]);
             if(!cart) {
                 res.status(404).end();
                 return;
             }
+            console.log("la cart a la fin du try", cart);
             res.json(cart);
-        } catch (err) {
+        }   catch (err) {
             res.status(400).end();
         }
     }
@@ -79,7 +80,7 @@ export class CartController {
         router.get('/', this.getAllCoffees.bind(this));
         router.get('/:coffee_id', this.getCoffee.bind(this));
         router.delete('/:coffee_id', this.deleteCoffee.bind(this));
-        router.put('/:user_id', express.json(), this.updateCart.bind(this));
+        router.put('/:user_id', express.json(), this.addItemToCart.bind(this));
         return router;
     }
 }

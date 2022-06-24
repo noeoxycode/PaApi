@@ -20,17 +20,53 @@ export class AuthService {
         if(!user.password) {
             throw new Error('Missing password');
         }
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
+        if(!user.password) {
+            throw new Error('Missing password');
+        }
         let roleName="";
         if(await AuthUtils.checkBigBoss()){
             roleName = possibleRole["BigBoss"];
         }else{
             roleName = possibleRole["Customer"];
         }
-        console.log(roleName);
             const model = new UserModel({
                 login: user.login,
                 password: SecurityUtils.sha512(user.password),
-                role:roleName
+                role:roleName,
+                name: user.name,
+                surname: user.surname,
+                birthDate: user.birthDate,
+
+
+                adress: {
+                    number: user.adress.number,
+                    street: req.body.street,
+                    postalCode: req.body.postalCode,
+                    town: req.body.town,
+                    country: req.body.country,
+                },
+                email: req.body.email,
+                cart: {
+                    content: req.body.content,
+                    deliveryDate: req.body.deliverDate,
+                    customerId: req.body.customerId,
+                    assistantId: req.body.assistantId,
+                    status: req.body.status,
+                    numberCart: req.body.numberCart,
+                },
+
             });
             return model.save();
     }

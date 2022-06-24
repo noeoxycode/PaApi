@@ -8,7 +8,26 @@ export class AuthController {
         try {
             const user = await AuthService.getInstance().subscribeUser({
                 login: req.body.login,
-                password: req.body.password
+                password: req.body.password,
+                name: req.body.name,
+                surname: req.body.surname,
+                birthDate: req.body.birthDate,
+                adress: {
+                    number: req.body.number,
+                    street: req.body.street,
+                    postalCode: req.body.postalCode,
+                    town: req.body.town,
+                    country: req.body.country,
+                },
+                email: req.body.email,
+                cart: {
+                    content: req.body.content,
+                    deliveryDate: req.body.deliverDate,
+                    customerId: req.body.customerId,
+                    assistantId: req.body.assistantId,
+                    status: req.body.status,
+                    numberCart: req.body.numberCart,
+                },
             });
             res.json(user);
         } catch(err) {

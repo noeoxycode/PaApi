@@ -6,6 +6,8 @@ import {RecipeProps} from "./recipe.models";
 import {IngredientProps} from "./ingredient.model";
 import {OrderProps} from "./order.model";
 import {ToolProps} from "./tools.model";
+import {CartDocument, CartProps} from "./cart.model";
+import {WishListProps} from "./wishList.model";
 
 export const possibleRole:{[status:string]:string;}={
     "BigBoss":'BigBoss',
@@ -113,8 +115,8 @@ export interface UserProps {
     adress: AdressProps;
     email: string;
     sessions: string[] | SessionProps[];
-    cart: string[] | RecipeProps[];
-    wishlist: string[] | RecipeProps[];
+    cart: CartProps;
+    wishlist: WishListProps;
     favorite: string[] | RecipeProps[];
     stock: [string[] | IngredientProps[], number];
     history: OrderProps[];

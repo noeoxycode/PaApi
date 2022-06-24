@@ -1,6 +1,8 @@
 import {CartDocument, CartModel, CartProps} from "../models/cart.model";
-import {RecipeDocument, RecipeModel} from "../models/recipe.models";
+import {RecipeDocument, RecipeModel, RecipeProps} from "../models/recipe.models";
 import {Schema} from "mongoose";
+import {UserDocument, UserModel} from "../models";
+import {RestoDocument, RestoModel} from "../models/restau.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -21,12 +23,12 @@ export class CartService {
         return CartModel.find().exec();
     }
 
-    async getCartByUserId(userId: string): Promise<CartDocument | null> {
-        return CartModel.findById(userId).exec();
-    }
-
     async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
+    }
+
+    async getUserById(userId: string): Promise<UserDocument | null> {
+        return await UserModel.findById(userId).exec();
     }
 
     async deleteById(cartId: string): Promise<boolean> {
@@ -34,17 +36,21 @@ export class CartService {
         return res.deletedCount === 1;
     }
 
-    async addItem(userId: string, recipeId: string, number: number): Promise<CartDocument | null> {
-        const cart = await this.getCartByUserId(userId);
-        if(!cart) {
+    async addItem(userId: string, recipeId: string, number: number): Promise<UserDocument | null> {
+        const user = await this.getUserById(userId);
+        if(!user) {
             return null;
         }
-        const tmp = await this.getRecipeById(recipeId)
+        const tmp = await this.getRecipeById(recipeId);
+        console.log("tmp in addItem", tmp);
         if(tmp !== undefined) {
-            const newItem: [string, number] = [recipeId, number];
-            cart.content.push(recipeId, number);
+            console.log("le user avant le push", user.cart.content);
+            user.cart.content.push(recipeId, number);
+            console.log("le user apres le push", user);
         }
-        const res = await cart.save();
+        console.log("coucou before save" );
+        const res = await user.save();
+        console.log("res displayed at the end : ", res);
         return res;
     }
 }
