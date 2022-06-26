@@ -2,6 +2,8 @@ import express, {Router, Request, Response} from "express";
 import {CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {CartService} from "../services/cart.service";
+import {OrderDocument, OrderModel} from "../models/order.model";
+import {UserDocument, UserModel} from "../models";
 
 export class CartController {
 
@@ -55,6 +57,10 @@ export class CartController {
         } catch(err) {
             res.status(400).end();
         }
+    }
+
+    getUserById(orderId: string): Promise<UserDocument | null> {
+        return UserModel.findById(orderId).exec();
     }
 
     async addItemToCart(req: Request, res: Response) {

@@ -20,20 +20,47 @@ export class AuthService {
         if(!user.password) {
             throw new Error('Missing password');
         }
-        if(!user.password) {
-            throw new Error('Missing password');
+        if(!user.name) {
+            throw new Error('Missing name');
         }
-        if(!user.password) {
-            throw new Error('Missing password');
+        if(!user.surname) {
+            throw new Error('Missing surname');
         }
-        if(!user.password) {
-            throw new Error('Missing password');
+        if(!user.birthdate) {
+            throw new Error('Missing birthdate');
         }
-        if(!user.password) {
-            throw new Error('Missing password');
+        if(!user.adress) {
+            throw new Error('Missing adress');
         }
-        if(!user.password) {
-            throw new Error('Missing password');
+        if(!user.email) {
+            throw new Error('Missing email');
+        }
+        if(!user.cart) {
+            throw new Error('Missing cart');
+        }
+        if(!user.wishlist) {
+            throw new Error('Missing wishlist');
+        }
+        if(!user.favorite) {
+            throw new Error('Missing favorite');
+        }
+        if(!user.stock) {
+            throw new Error('Missing stock');
+        }
+        if(!user.history) {
+            throw new Error('Missing history');
+        }
+        if(!user.material) {
+            throw new Error('Missing material');
+        }
+        if(!user.orderinProgress) {
+            throw new Error('Missing orderinProgress');
+        }
+        if(!user.linkedProfiles) {
+            throw new Error('Missing linkedProfiles');
+        }
+        if(!user.photo) {
+            throw new Error('Missing photo');
         }
         let roleName="";
         if(await AuthUtils.checkBigBoss()){
@@ -44,30 +71,49 @@ export class AuthService {
             const model = new UserModel({
                 login: user.login,
                 password: SecurityUtils.sha512(user.password),
-                role:roleName,
+
+
                 name: user.name,
                 surname: user.surname,
-                birthDate: user.birthDate,
-
-
+                birthdate: user.birthdate,
                 adress: {
                     number: user.adress.number,
-                    street: req.body.street,
-                    postalCode: req.body.postalCode,
-                    town: req.body.town,
-                    country: req.body.country,
+                    street: user.adress.street,
+                    postalCode: user.adress.postalCode,
+                    town: user.adress.town,
+                    country: user.adress.country,
                 },
-                email: req.body.email,
+                email: user.email,
                 cart: {
-                    content: req.body.content,
-                    deliveryDate: req.body.deliverDate,
-                    customerId: req.body.customerId,
-                    assistantId: req.body.assistantId,
-                    status: req.body.status,
-                    numberCart: req.body.numberCart,
+                    content: [{
+                        idRecipe: user.cart.content[0].idRecipe,
+                        quantity: user.cart.content[0].quantity
+                    }],
+                    deliveryDate: user.cart.deliveryDate,
+                    customerId: user.cart.customerId,
+                    assistantId: user.cart.assistantId,
+                    status: user.cart.status,
+                    numberCart: user.cart.numberCart,
                 },
+                wishlist : [{
+                    content: user.wishlist.content,
+                    idCustomer: user.wishlist.idCustomer,
+                }],
+                favorite: user.favorite,
+                stock: {
+                    ingredient: user.stock[0].ingredient,
+                    quantity: user.stock[0].quantity
+                },
+                history: user.history,
+                material: user.material,
+                orderinProgress: user.orderinProgress,
+                linkedProfiles: user.linkedProfiles,
+                photo: user.photo,
 
             });
+        console.log("cart content idrecipe", model.cart.content[0].idRecipe);
+        console.log("wishlist content 0", model.wishlist.content);
+        console.log("stock quantity", model.stock[0].quantity);
             return model.save();
     }
 

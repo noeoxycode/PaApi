@@ -6,8 +6,9 @@ import {RecipeProps} from "./recipe.models";
 import {IngredientProps} from "./ingredient.model";
 import {OrderProps} from "./order.model";
 import {ToolProps} from "./tools.model";
-import {CartDocument, CartProps} from "./cart.model";
-import {WishListProps} from "./wishList.model";
+import {CartDocument, CartProps, cartSchema} from "./cart.model";
+import {WishListProps, wishListSchema} from "./wishList.model";
+import {StockProps, stockSchema} from "./stock.model";
 
 export const possibleRole:{[status:string]:string;}={
     "BigBoss":'BigBoss',
@@ -60,25 +61,22 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Session"
     }],
-    cart: [{
-        type: Schema.Types.ObjectId,
+    cart: {
+        type: cartSchema,
         ref: "Cart"
-    }],
+    },
     wishlist: [{
-        type: Schema.Types.ObjectId,
+        type: wishListSchema,
         ref: "Wishlist"
     }],
     favorite: [{
         type: Schema.Types.ObjectId,
         ref: "Favorite"
     }],
-    stock: [[{
-                type: Schema.Types.ObjectId,
-                ref: "Ingredient"
-            }],
-                [{type: Schema.Types.Number,
-                ref: "Quantity"}]
-    ],
+    stock: [{
+        type: stockSchema,
+        ref: "stock"
+    }],
     history: [{
         type: Schema.Types.ObjectId,
         ref: "Order"
@@ -111,14 +109,14 @@ export interface UserProps {
     role: string;
     name: string;
     surname: string;
-    birthDate: Date;
+    birthdate: Date;
     adress: AdressProps;
     email: string;
     sessions: string[] | SessionProps[];
     cart: CartProps;
     wishlist: WishListProps;
     favorite: string[] | RecipeProps[];
-    stock: [string[] | IngredientProps[], number];
+    stock: StockProps[];
     history: OrderProps[];
     material: ToolProps[];
     orderinProgress: [OrderProps];

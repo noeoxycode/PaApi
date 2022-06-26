@@ -11,26 +11,44 @@ export class AuthController {
                 password: req.body.password,
                 name: req.body.name,
                 surname: req.body.surname,
-                birthDate: req.body.birthDate,
+                birthdate: req.body.birthdate,
                 adress: {
-                    number: req.body.number,
-                    street: req.body.street,
-                    postalCode: req.body.postalCode,
-                    town: req.body.town,
-                    country: req.body.country,
+                    number: req.body.adress.number,
+                    street: req.body.adress.street,
+                    postalCode: req.body.adress.postalCode,
+                    town: req.body.adress.town,
+                    country: req.body.adress.country,
                 },
                 email: req.body.email,
                 cart: {
-                    content: req.body.content,
-                    deliveryDate: req.body.deliverDate,
-                    customerId: req.body.customerId,
-                    assistantId: req.body.assistantId,
-                    status: req.body.status,
-                    numberCart: req.body.numberCart,
+                    content: [{
+                        idRecipe: req.body.cart.content.idRecipe,
+                        quantity: req.body.cart.content.quantity
+                    }],
+                    deliveryDate: req.body.cart.deliveryDate,
+                    customerId: req.body.cart.customerId,
+                    assistantId: req.body.cart.assistantId,
+                    status: req.body.cart.status,
+                    numberCart: req.body.cart.numberCart,
                 },
+                wishlist : {
+                    content: req.body.wishlist.content,
+                    idCustomer: req.body.wishlist.idCustomer,
+                },
+                favorite: req.body.favorite,
+                stock: [{
+                    ingredient: req.body.stock.ingredient,
+                    quantity: req.body.stock.quantity
+                }],
+                history: req.body.history,
+                material: req.body.material,
+                orderinProgress: req.body.orderinProgress,
+                linkedProfiles: req.body.linkedProfiles,
+                photo: req.body.photo,
             });
             res.json(user);
         } catch(err) {
+            console.log("error 400");
             res.status(400).end();
         }
     }

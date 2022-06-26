@@ -3,6 +3,7 @@ import {RecipeDocument, RecipeModel, RecipeProps} from "../models/recipe.models"
 import {Schema} from "mongoose";
 import {UserDocument, UserModel} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
+import {CartContentValuesModel} from "../models/cartContentValues.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -44,8 +45,13 @@ export class CartService {
         const tmp = await this.getRecipeById(recipeId);
         console.log("tmp in addItem", tmp);
         if(tmp !== undefined) {
-            console.log("le user avant le push", user.cart.content);
-            user.cart.content.push(recipeId, number);
+            console.log("user cart content", user.cart.content);
+            let coucou = new CartContentValuesModel({
+                idRecipe: recipeId,
+                quantity:number
+            });
+            console.log("nono", coucou);
+            /*user.cart.content.push(coucou);*/
             console.log("le user apres le push", user);
         }
         console.log("coucou before save" );
