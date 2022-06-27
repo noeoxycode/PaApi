@@ -35,30 +35,6 @@ export class AuthService {
         if(!user.email) {
             throw new Error('Missing email');
         }
-        if(!user.cart) {
-            throw new Error('Missing cart');
-        }
-        if(!user.wishlist) {
-            throw new Error('Missing wishlist');
-        }
-        if(!user.favorite) {
-            throw new Error('Missing favorite');
-        }
-        if(!user.stock) {
-            throw new Error('Missing stock');
-        }
-        if(!user.history) {
-            throw new Error('Missing history');
-        }
-        if(!user.material) {
-            throw new Error('Missing material');
-        }
-        if(!user.orderinProgress) {
-            throw new Error('Missing orderinProgress');
-        }
-        if(!user.linkedProfiles) {
-            throw new Error('Missing linkedProfiles');
-        }
         if(!user.photo) {
             throw new Error('Missing photo');
         }
@@ -71,7 +47,7 @@ export class AuthService {
             const model = new UserModel({
                 login: user.login,
                 password: SecurityUtils.sha512(user.password),
-
+                role: roleName,
 
                 name: user.name,
                 surname: user.surname,
@@ -84,36 +60,11 @@ export class AuthService {
                     country: user.adress.country,
                 },
                 email: user.email,
-                cart: {
-                    content: [{
-                        idRecipe: user.cart.content[0].idRecipe,
-                        quantity: user.cart.content[0].quantity
-                    }],
-                    deliveryDate: user.cart.deliveryDate,
-                    customerId: user.cart.customerId,
-                    assistantId: user.cart.assistantId,
-                    status: user.cart.status,
-                    numberCart: user.cart.numberCart,
-                },
-                wishlist : [{
-                    content: user.wishlist.content,
-                    idCustomer: user.wishlist.idCustomer,
-                }],
-                favorite: user.favorite,
-                stock: {
-                    ingredient: user.stock[0].ingredient,
-                    quantity: user.stock[0].quantity
-                },
-                history: user.history,
-                material: user.material,
-                orderinProgress: user.orderinProgress,
-                linkedProfiles: user.linkedProfiles,
                 photo: user.photo,
 
             });
-        console.log("cart content idrecipe", model.cart.content[0].idRecipe);
-        console.log("wishlist content 0", model.wishlist.content);
-        console.log("stock quantity", model.stock[0].quantity);
+            console.log("user avant ", user);
+            console.log("user apres ", model);
             return model.save();
     }
 

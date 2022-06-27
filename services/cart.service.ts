@@ -1,9 +1,11 @@
 import {CartDocument, CartModel, CartProps} from "../models/cart.model";
 import {RecipeDocument, RecipeModel, RecipeProps} from "../models/recipe.models";
 import {Schema} from "mongoose";
-import {UserDocument, UserModel} from "../models";
+import {UserDocument, UserModel, UserProps} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
 import {CartContentValuesModel} from "../models/cartContentValues.model";
+import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
+import {CoffeeModel} from "../models/coffee.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -58,5 +60,13 @@ export class CartService {
         const res = await user.save();
         console.log("res displayed at the end : ", res);
         return res;
+    }
+
+    async addTool(props: ToolProps, user: UserProps): Promise<UserDocument> {
+        const model = new ToolModel(props);
+        const newUSer = new UserModel(user);
+        newUSer.material.push(model);
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
     }
 }

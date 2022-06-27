@@ -20,32 +20,9 @@ export class AuthController {
                     country: req.body.adress.country,
                 },
                 email: req.body.email,
-                cart: {
-                    content: [{
-                        idRecipe: req.body.cart.content.idRecipe,
-                        quantity: req.body.cart.content.quantity
-                    }],
-                    deliveryDate: req.body.cart.deliveryDate,
-                    customerId: req.body.cart.customerId,
-                    assistantId: req.body.cart.assistantId,
-                    status: req.body.cart.status,
-                    numberCart: req.body.cart.numberCart,
-                },
-                wishlist : {
-                    content: req.body.wishlist.content,
-                    idCustomer: req.body.wishlist.idCustomer,
-                },
-                favorite: req.body.favorite,
-                stock: [{
-                    ingredient: req.body.stock.ingredient,
-                    quantity: req.body.stock.quantity
-                }],
-                history: req.body.history,
-                material: req.body.material,
-                orderinProgress: req.body.orderinProgress,
-                linkedProfiles: req.body.linkedProfiles,
                 photo: req.body.photo,
             });
+            console.log("coucou before json");
             res.json(user);
         } catch(err) {
             console.log("error 400");
