@@ -4,6 +4,7 @@ import {checkUserConnected} from "../middlewares";
 import {CartService} from "../services/cart.service";
 import {OrderDocument, OrderModel} from "../models/order.model";
 import {UserDocument, UserModel} from "../models";
+import {ToolModel, ToolProps} from "../models/tools.model";
 
 export class CartController {
 
@@ -63,7 +64,7 @@ export class CartController {
         return UserModel.findById(orderId).exec();
     }
 
-    getUserIdByTokenSession(sessionId: string): Promise<UserDocument | null> {
+    getUserByTokenSession(sessionId: string): Promise<UserDocument | null> {
         console.log("coucou in cirnge name", sessionId);
         return UserModel.findOne({
             sessions : sessionId
@@ -90,7 +91,7 @@ export class CartController {
         let idsession = "";
         if(sessionId)
             idsession = sessionId.slice(7);
-        const tmpUser = await this.getUserIdByTokenSession(idsession);
+        const tmpUser = await this.getUserByTokenSession(idsession);
 
         const toolBody = req.body;
         if(!toolBody.name || !toolBody.photo || !toolBody.description) {
@@ -110,16 +111,30 @@ export class CartController {
         }
     }
 
+    async deleteMaterial(req: Request, res: Response) {
+        let sessionId = req.headers.authorization;
+        let idsession = "";
+        if(sessionId)
+            idsession = sessionId.slice(7);
+        const tmpUser = await this.getUserByTokenSession(idsession);
+        try {
+            const success = await CartService.getInstance().deleteTool(tmpUser, req.params.coffee_id);
+            if(success) {
+                res.status(204).end();
+            } else {
+                res.status(404).end();
+            }
+        } catch(err) {
+            res.status(400).end();
+        }
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         //router.use();
         router.use(checkUserConnected(""));
-        router.post('/', express.json(), this.createCoffee.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.post('/addTool', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
-        router.get('/', this.getAllCoffees.bind(this));
-        router.get('/:coffee_id', this.getCoffee.bind(this));
-        router.delete('/:coffee_id', this.deleteCoffee.bind(this));
-        router.put('/:user_id', express.json(), this.addItemToCart.bind(this));
-        return router;
+        router.delete('/deleteTool/:coffee_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+      return router;
     }
 }

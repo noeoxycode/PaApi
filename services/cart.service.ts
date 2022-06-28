@@ -62,11 +62,25 @@ export class CartService {
         return res;
     }
 
-    async addTool(props: ToolProps, user: UserProps): Promise<UserDocument> {
+    async addTool(props: ToolProps, user: UserProps | null): Promise<UserDocument> {
         const model = new ToolModel(props);
         const newUSer = new UserModel(user);
-        newUSer.material.push(model);
+        newUSer.material.push(model.id);
         const updatedUSer = await newUSer.save();
         return updatedUSer;
+    }
+
+    async deleteTool(user: UserDocument | null, tool: string){
+        if(user){
+            for(let i=0; i<= user.material.length; i++){
+                if(user.material[i]== tool){
+                    user.material.splice(i);
+                    break;
+                }
+            }
+            user.save();
+            return user;
+        }
+
     }
 }

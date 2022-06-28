@@ -118,7 +118,7 @@ export interface UserProps {
     favorite: string[] | RecipeProps[];
     stock: StockProps[];
     history: OrderProps[];
-    material: ToolProps[];
+    material: string[] | ToolProps[];
     orderinProgress: [OrderProps];
     linkedProfiles: [string | UserProps];
     photo: string;
