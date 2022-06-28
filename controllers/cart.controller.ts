@@ -64,10 +64,13 @@ export class CartController {
         return UserModel.findById(orderId).exec();
     }
 
-    getUserByTokenSession(sessionId: string): Promise<UserDocument | null> {
-        console.log("coucou in cirnge name", sessionId);
+    getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
+        console.log("coucou in cirnge name", reqHeader);
+        let idsession = "";
+        if(reqHeader)
+            idsession = reqHeader.slice(7);
         return UserModel.findOne({
-            sessions : sessionId
+            sessions : idsession
         }).exec();
     }
 
@@ -87,47 +90,50 @@ export class CartController {
     }
 
     async addTool(req: Request, res: Response) {
-        let sessionId = req.headers.authorization;
-        let idsession = "";
-        if(sessionId)
-            idsession = sessionId.slice(7);
-        const tmpUser = await this.getUserByTokenSession(idsession);
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
 
-        const toolBody = req.body;
-        if(!toolBody.name || !toolBody.photo || !toolBody.description) {
-            res.status(400).end(); // 400 -> bad request
-            return;
-        }
-        try {
-            const tool = await CartService.getInstance().addTool({
-                name: toolBody.name,
-                photo: toolBody.photo,
-                description: toolBody.description,
-            }, tmpUser);
-            res.json(tool);
-        } catch(err) {
-            res.status(400).end(); // erreur des données utilisateurs
-            return;
-        }
-    }
-
-    async deleteMaterial(req: Request, res: Response) {
-        let sessionId = req.headers.authorization;
-        let idsession = "";
-        if(sessionId)
-            idsession = sessionId.slice(7);
-        const tmpUser = await this.getUserByTokenSession(idsession);
-        try {
-            const success = await CartService.getInstance().deleteTool(tmpUser, req.params.coffee_id);
-            if(success) {
-                res.status(204).end();
-            } else {
-                res.status(404).end();
+            const toolBody = req.body;
+            if(!toolBody.name || !toolBody.photo || !toolBody.description) {
+                res.status(400).end(); // 400 -> bad request
+                return;
             }
-        } catch(err) {
-            res.status(400).end();
+            try {
+                const tool = await CartService.getInstance().addTool({
+                    name: toolBody.name,
+                    photo: toolBody.photo,
+                    description: toolBody.description,
+                }, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
         }
+        else
+            console.log("Error");
     }
+
+   async deleteMaterial(req: Request, res: Response) {
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const success = await CartService.getInstance().deleteTool(tmpUser, req.params.coffee_id);
+                if(success) {
+                    res.status(204).end();
+                } else {
+                    res.status(404).end();
+                }
+            } catch(err) {
+                res.status(400).end();
+            }
+        }
+        else
+            console.log("Error");
+
+    }
+
+
 
     buildRoutes(): Router {
         const router = express.Router();
