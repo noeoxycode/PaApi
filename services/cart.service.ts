@@ -5,7 +5,7 @@ import {UserDocument, UserModel, UserProps} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
 import {CartContentValuesModel} from "../models/cartContentValues.model";
 import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
-import {CoffeeModel} from "../models/coffee.model";
+import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -20,6 +20,12 @@ export class CartService {
         const model = new CartModel(props);
         const cart = await model.save();
         return cart;
+    }
+
+    public async createTool(props: ToolProps): Promise<ToolDocument> {
+        const model = new ToolModel(props);
+        const tool = await model.save();
+        return tool;
     }
 
     async getAll(): Promise<CartDocument[]> {
@@ -65,7 +71,7 @@ export class CartService {
         return res;
     }
 
-    async addTool(toolId: string, user: UserProps | null): Promise<UserDocument> {
+    async asignToolToUser(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
         if(this.getToolById(toolId) != null)
             { // @ts-ignore
