@@ -135,10 +135,8 @@ export class CartController {
     }
 
    async deleteMaterial(req: Request, res: Response) {
-        if(req.headers.authorization){
-            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
-            try {
-                const success = await CartService.getInstance().deleteTool(tmpUser, req.params.tool_id);
+         try {
+                const success = await CartService.getInstance().deleteTool(req.params.tool_id);
                 if(success) {
                     res.status(204).end();
                 } else {
@@ -147,9 +145,6 @@ export class CartController {
             } catch(err) {
                 res.status(400).end();
             }
-        }
-        else
-            console.log("Error");
     }
 
 

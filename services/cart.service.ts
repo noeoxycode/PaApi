@@ -81,16 +81,22 @@ export class CartService {
         return updatedUSer;
     }
 
-    async deleteTool(user: UserDocument | null, tool: string){
-        if(user){
-            for(let i=0; i<= user.material.length; i++){
-                if(user.material[i]== tool){
-                    user.material.splice(i);
+    async deleteTool(toolId: string) {
+        const toolToDelete = await ToolModel.findById(toolId);
+        if(!toolToDelete)
+            return;
+        const usersUsingTool = await UserModel.find({material: toolId}).exec();
+        const res = await ToolModel.deleteOne({_id: toolId}).exec();
+        for (let i = 0; i < usersUsingTool.length; i++)
+        {
+            for(let j=0; j< usersUsingTool[i].material.length; j++){
+                if(usersUsingTool[i].material[j]== toolToDelete.id){
+                    usersUsingTool[i].material.splice(j);
+                    usersUsingTool[i].save();
                     break;
                 }
             }
-            user.save();
-            return user;
         }
+        return 1;
     }
 }
