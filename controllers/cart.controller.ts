@@ -73,23 +73,49 @@ export class CartController {
             sessions : idsession
         }).exec();
     }
-
+/*
     async addItemToCart(req: Request, res: Response) {
-        try {
-            const cart = await CartService.getInstance()
-                .addItem(req.params.user_id, req.body.content[0], req.body.content[1]);
-            if(!cart) {
-                res.status(404).end();
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+
+            const toolBody = req.body;
+            if(!toolBody.content || !toolBody.customerId || !toolBody.status || !toolBody.numberCart) {
+                res.status(400).end(); // 400 -> bad request
                 return;
             }
-            console.log("la cart a la fin du try", cart);
-            res.json(cart);
-        }   catch (err) {
-            res.status(400).end();
+            try {
+                const tool = await CartService.getInstance().addTool({
+                    name: toolBody.name,
+                    photo: toolBody.photo,
+                    description: toolBody.description,
+                }, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
         }
+        else
+            console.log("Error");
     }
-
-    async addTool(req: Request, res: Response) {
+   */
+    async addTool(req: Request, res: Response){
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            const toolBody = req.body;
+            try {
+                const tool = await CartService.getInstance().addTool(req.params.tool_id, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else
+            console.log("Error");
+    }
+/*
+    async coucou(req: Request, res: Response) {
         if(req.headers.authorization){
             const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
 
@@ -113,12 +139,12 @@ export class CartController {
         else
             console.log("Error");
     }
-
+*/
    async deleteMaterial(req: Request, res: Response) {
         if(req.headers.authorization){
             const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             try {
-                const success = await CartService.getInstance().deleteTool(tmpUser, req.params.coffee_id);
+                const success = await CartService.getInstance().deleteTool(tmpUser, req.params.tool_id);
                 if(success) {
                     res.status(204).end();
                 } else {
@@ -130,7 +156,6 @@ export class CartController {
         }
         else
             console.log("Error");
-
     }
 
 
@@ -140,7 +165,9 @@ export class CartController {
         //router.use();
         router.use(checkUserConnected(""));
         router.post('/addTool', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
-        router.delete('/deleteTool/:coffee_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.delete('/deleteTool/:tool_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+
       return router;
     }
 }

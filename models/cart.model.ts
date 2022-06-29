@@ -8,12 +8,7 @@ export const cartSchema = new Schema({
     content: [{
         type: cartContentValuesSchema,
         ref: "Recipe"
-    },
-    {
-        type: Schema.Types.Number,
-        ref: "Quantity"
-    }]
-    ,
+    }],
     deliveryDate: {
         type: Schema.Types.Date,
         required: false

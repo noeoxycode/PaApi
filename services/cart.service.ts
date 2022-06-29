@@ -29,6 +29,9 @@ export class CartService {
     async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
     }
+    async getToolById(toolId: string): Promise<ToolDocument | null> {
+        return ToolModel.findById(toolId).exec();
+    }
 
     async getUserById(userId: string): Promise<UserDocument | null> {
         return await UserModel.findById(userId).exec();
@@ -62,10 +65,12 @@ export class CartService {
         return res;
     }
 
-    async addTool(props: ToolProps, user: UserProps | null): Promise<UserDocument> {
-        const model = new ToolModel(props);
+    async addTool(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
-        newUSer.material.push(model.id);
+        if(this.getToolById(toolId) != null)
+            { // @ts-ignore
+                newUSer.material.push(toolId);
+            }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
     }
@@ -81,6 +86,5 @@ export class CartService {
             user.save();
             return user;
         }
-
     }
 }
