@@ -180,8 +180,26 @@ export class CartController {
                 res.status(400).end();
             }
         }
+    }
 
+    async getRecipeById(req: Request, res: Response) {
+        try {
+            const coffee = await CartService.getInstance().getRecipeById(req.params.recipe_id);
+            if(coffee === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(coffee);
+        } catch(err) {
+            res.status(400).end();
+            return;
+        }
+    }
 
+    async getAllRecipe(req: Request, res: Response) {
+        console.log("coucou in get all recipe controller");
+        const recipes = await CartService.getInstance().getAllRecipe();
+        res.json(recipes);
     }
 
     buildRoutes(): Router {
@@ -193,6 +211,8 @@ export class CartController {
         router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addRecipeToCart', express.json(), this.addRecipeToCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromCart/:recipe_id', express.json(), this.removeRecipeFromCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.get('/:recipe_id', this.getRecipeById.bind(this));
+        router.get('/', this.getAllRecipe.bind(this));
 
       return router;
     }

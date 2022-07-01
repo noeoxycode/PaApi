@@ -31,6 +31,10 @@ export class CartService {
         return CartModel.find().exec();
     }
 
+    async getAllRecipe(): Promise<RecipeDocument[]> {
+        return RecipeModel.find().exec();
+    }
+
     async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
     }
