@@ -149,6 +149,8 @@ export class CartController {
             }
     }
 
+
+
    async deleteMaterial(req: Request, res: Response) {
          try {
                 const success = await CartService.getInstance().deleteTool(req.params.tool_id);
@@ -162,7 +164,25 @@ export class CartController {
             }
     }
 
+    async removeRecipeFromCart(req: Request, res: Response) {
+        console.log("coucou");
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const success = await CartService.getInstance().removeRecipeFromCart(req.params.recipe_id, tmpUser);
+                if(success) {
+                    res.status(204).end();
+                } else {
+                    console.log("error");
+                    res.status(404).end();
+                }
+            } catch(err) {
+                res.status(400).end();
+            }
+        }
 
+
+    }
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -172,6 +192,7 @@ export class CartController {
         router.delete('/deleteTool/:tool_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addRecipeToCart', express.json(), this.addRecipeToCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.delete('/removeRecipeFromCart/:recipe_id', express.json(), this.removeRecipeFromCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
 
       return router;
     }

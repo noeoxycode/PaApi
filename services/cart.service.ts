@@ -73,6 +73,21 @@ export class CartService {
         return updatedUSer;
     }
 
+    async removeRecipeFromCart(itemId: string, user: UserProps | null) {
+        const tmpUser = new UserModel(user);
+        if(tmpUser){
+            for(let i = 0; i < tmpUser.cart.length; i++){
+                if(tmpUser.cart[i] == itemId){
+                    tmpUser.cart.splice(i);
+                    break;
+                }
+            }
+            const updatedUser = await tmpUser.save();
+            return updatedUser;
+        }
+    }
+
+
     async deleteTool(toolId: string) {
         const toolToDelete = await ToolModel.findById(toolId);
         if(!toolToDelete)
