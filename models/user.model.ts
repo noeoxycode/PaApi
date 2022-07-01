@@ -61,10 +61,10 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Session"
     }],
-    cart: {
-        type: cartSchema,
+    cart: [{
+        type: Schema.Types.ObjectId,
         ref: "Cart"
-    },
+    }],
     wishlist: [{
         type: wishListSchema,
         ref: "Wishlist"
@@ -113,7 +113,7 @@ export interface UserProps {
     adress: AdressProps;
     email: string;
     sessions: string[] | SessionProps[];
-    cart: CartProps;
+    cart: string[] | CartProps[];
     wishlist: WishListProps;
     favorite: string[] | RecipeProps[];
     stock: StockProps[];

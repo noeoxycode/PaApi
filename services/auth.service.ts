@@ -2,6 +2,7 @@ import {possibleRole, UserDocument, UserModel, UserProps} from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
+import {CartModel, cartSchema} from "../models/cart.model";
 
 export class AuthService {
 
@@ -61,10 +62,7 @@ export class AuthService {
                 },
                 email: user.email,
                 photo: user.photo,
-
             });
-            console.log("user avant ", user);
-            console.log("user apres ", model);
             return model.save();
     }
 

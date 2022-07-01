@@ -2,28 +2,14 @@ import mongoose, {Schema, Document, Model} from "mongoose";
 import {IngredientProps} from "./ingredient.model";
 import {RecipeProps} from "./recipe.models";
 import {UserProps} from "./user.model";
-import {CartContentValuesDocument, CartContentValuesProps, cartContentValuesSchema} from "./cartContentValues.model";
-
 export const cartSchema = new Schema({
-    content: [{
-        type: cartContentValuesSchema,
-        ref: "Recipe"
-    }],
-    deliveryDate: {
-        type: Schema.Types.Date,
-        required: false
-    },
-    customerId: {
+    idRecipe: {
         type: Schema.Types.ObjectId,
         required: true
     },
-    assistantId: {
-        type: Schema.Types.ObjectId,
-        required: false
-    },
-    status: {
-        type: Schema.Types.String,
-        required: true
+    quantity: {
+      type: Schema.Types.Number,
+      required: true
     },
     numberCart: {
         type: Schema.Types.Number,
@@ -36,11 +22,8 @@ export const cartSchema = new Schema({
 });
 
 export interface CartProps {
-    content: CartContentValuesProps[];
-    deliveryDate:Date;
-    customerId:string|UserProps;
-    assistantId:string|UserProps;
-    status:string;
+    idRecipe : string | RecipeProps;
+    quantity : number;
     numberCart:number;
 }
 

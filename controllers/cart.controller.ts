@@ -115,6 +115,21 @@ export class CartController {
             console.log("Error");
     }
 
+    async addRecipeToCart(req: Request, res: Response){
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const tool = await CartService.getInstance().addRecipeToCart(req.body, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else
+            console.log("Error");
+    }
+
     async createTool(req: Request, res: Response) {
             const toolBody = req.body;
             if(!req.body.name || !req.body.photo || !req.body.description) {
@@ -156,6 +171,7 @@ export class CartController {
         router.post('/createTool', express.json(), this.createTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/deleteTool/:tool_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.put('/addRecipeToCart', express.json(), this.addRecipeToCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
 
       return router;
     }

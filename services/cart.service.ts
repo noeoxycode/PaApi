@@ -3,7 +3,6 @@ import {RecipeDocument, RecipeModel, RecipeProps} from "../models/recipe.models"
 import {Schema} from "mongoose";
 import {UserDocument, UserModel, UserProps} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
-import {CartContentValuesModel} from "../models/cartContentValues.model";
 import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 export class CartService {
@@ -48,34 +47,27 @@ export class CartService {
         return res.deletedCount === 1;
     }
 
-    async addItem(userId: string, recipeId: string, number: number): Promise<UserDocument | null> {
-        const user = await this.getUserById(userId);
-        if(!user) {
-            return null;
-        }
-        const tmp = await this.getRecipeById(recipeId);
-        console.log("tmp in addItem", tmp);
-        if(tmp !== undefined) {
-            console.log("user cart content", user.cart.content);
-            let coucou = new CartContentValuesModel({
-                idRecipe: recipeId,
-                quantity:number
-            });
-            console.log("nono", coucou);
-            /*user.cart.content.push(coucou);*/
-            console.log("le user apres le push", user);
-        }
-        console.log("coucou before save" );
-        const res = await user.save();
-        console.log("res displayed at the end : ", res);
-        return res;
-    }
-
     async asignToolToUser(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
         if(this.getToolById(toolId) != null)
             { // @ts-ignore
                 newUSer.material.push(toolId);
+            }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
+    async addRecipeToCart(item: CartProps, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        if(item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null)
+            {
+                const newItem = new CartModel({
+                    idRecipe: item.idRecipe,
+                    quantity: item.quantity,
+                    numberCart: item.numberCart
+                })
+                const createdItem = await newItem.save();
+                newUSer.cart.push(createdItem.id);
             }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
