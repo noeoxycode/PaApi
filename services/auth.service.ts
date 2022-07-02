@@ -2,6 +2,7 @@ import {possibleRole, UserDocument, UserModel, UserProps} from "../models";
 import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
+import {CartModel, cartSchema} from "../models/cart.model";
 
 export class AuthService {
 
@@ -20,17 +21,47 @@ export class AuthService {
         if(!user.password) {
             throw new Error('Missing password');
         }
+        if(!user.name) {
+            throw new Error('Missing name');
+        }
+        if(!user.surname) {
+            throw new Error('Missing surname');
+        }
+        if(!user.birthdate) {
+            throw new Error('Missing birthdate');
+        }
+        if(!user.adress) {
+            throw new Error('Missing adress');
+        }
+        if(!user.email) {
+            throw new Error('Missing email');
+        }
+        if(!user.photo) {
+            throw new Error('Missing photo');
+        }
         let roleName="";
         if(await AuthUtils.checkBigBoss()){
             roleName = possibleRole["BigBoss"];
         }else{
             roleName = possibleRole["Customer"];
         }
-        console.log(roleName);
             const model = new UserModel({
                 login: user.login,
                 password: SecurityUtils.sha512(user.password),
-                role:roleName
+                role: roleName,
+
+                name: user.name,
+                surname: user.surname,
+                birthdate: user.birthdate,
+                adress: {
+                    number: user.adress.number,
+                    street: user.adress.street,
+                    postalCode: user.adress.postalCode,
+                    town: user.adress.town,
+                    country: user.adress.country,
+                },
+                email: user.email,
+                photo: user.photo,
             });
             return model.save();
     }

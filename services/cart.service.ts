@@ -1,51 +1,113 @@
+import {CartDocument, CartModel, CartProps} from "../models/cart.model";
+import {RecipeDocument, RecipeModel, RecipeProps} from "../models/recipe.models";
+import {Schema} from "mongoose";
+import {UserDocument, UserModel, UserProps} from "../models";
+import {RestoDocument, RestoModel} from "../models/restau.model";
+import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
-export class CoffeeService {
-    private static instance?: CoffeeService;
-    public static getInstance(): CoffeeService {
-        if(CoffeeService.instance === undefined) {
-            CoffeeService.instance = new CoffeeService();
+export class CartService {
+    private static instance?: CartService;
+    public static getInstance(): CartService {
+        if(CartService.instance === undefined) {
+            CartService.instance = new CartService();
         }
-        return CoffeeService.instance;
+        return CartService.instance;
     }
     private constructor() { }
 
-    public async createCoffee(props: CoffeeProps): Promise<CoffeeDocument> {
-        const model = new CoffeeModel(props);
-        const coffee = await model.save();
-        return coffee;
+    public async createCart(props: CartProps): Promise<CartDocument> {
+        const model = new CartModel(props);
+        const cart = await model.save();
+        return cart;
     }
 
-    async getAll(): Promise<CoffeeDocument[]> {
-        return CoffeeModel.find().exec();
+    public async createTool(props: ToolProps): Promise<ToolDocument> {
+        const model = new ToolModel(props);
+        const tool = await model.save();
+        return tool;
     }
 
-    async getById(coffeeId: string): Promise<CoffeeDocument | null> {
-        return CoffeeModel.findById(coffeeId).exec();
+    async getAll(): Promise<CartDocument[]> {
+        return CartModel.find().exec();
     }
 
-    async deleteById(coffeeId: string): Promise<boolean> {
-        const res = await CoffeeModel.deleteOne({_id: coffeeId}).exec();
+    async getAllRecipe(): Promise<RecipeDocument[]> {
+        return RecipeModel.find().exec();
+    }
+
+    async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
+        return RecipeModel.findById(recipeId).exec();
+    }
+    async getToolById(toolId: string): Promise<ToolDocument | null> {
+        return ToolModel.findById(toolId).exec();
+    }
+
+    async getUserById(userId: string): Promise<UserDocument | null> {
+        return await UserModel.findById(userId).exec();
+    }
+
+    async deleteById(cartId: string): Promise<boolean> {
+        const res = await CartModel.deleteOne({_id: cartId}).exec();
         return res.deletedCount === 1;
     }
 
-    async updateById(coffeeId: string, props: CoffeeProps): Promise<CoffeeDocument | null> {
-        const coffee = await this.getById(coffeeId);
-        if(!coffee) {
-            return null;
+    async asignToolToUser(toolId: string, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        if(this.getToolById(toolId) != null)
+            { // @ts-ignore
+                newUSer.material.push(toolId);
+            }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
+    async addRecipeToCart(item: CartProps, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        if(item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null)
+            {
+                const newItem = new CartModel({
+                    idRecipe: item.idRecipe,
+                    quantity: item.quantity,
+                    numberCart: item.numberCart
+                })
+                const createdItem = await newItem.save();
+                newUSer.cart.push(createdItem.id);
+            }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
+    async removeRecipeFromCart(itemId: string, user: UserProps | null) {
+        const tmpUser = new UserModel(user);
+        if(tmpUser){
+            for(let i = 0; i < tmpUser.cart.length; i++){
+                if(tmpUser.cart[i] == itemId){
+                    tmpUser.cart.splice(i);
+                    break;
+                }
+            }
+            const updatedUser = await tmpUser.save();
+            return updatedUser;
         }
-        if(props.name !== undefined) {
-            coffee.name = props.name;
+    }
+
+
+    async deleteTool(toolId: string) {
+        const toolToDelete = await ToolModel.findById(toolId);
+        if(!toolToDelete)
+            return;
+        const usersUsingTool = await UserModel.find({material: toolId}).exec();
+        const res = await ToolModel.deleteOne({_id: toolId}).exec();
+        for (let i = 0; i < usersUsingTool.length; i++)
+        {
+            for(let j=0; j< usersUsingTool[i].material.length; j++){
+                if(usersUsingTool[i].material[j]== toolToDelete.id){
+                    usersUsingTool[i].material.splice(j);
+                    usersUsingTool[i].save();
+                    break;
+                }
+            }
         }
-        if(props.price !== undefined) {
-            coffee.price = props.price;
-        }
-        if(props.origin !== undefined) {
-            coffee.origin = props.origin;
-        }
-        if(props.intensity !== undefined) {
-            coffee.intensity = props.intensity;
-        }
-        const res = await coffee.save();
-        return res;
+        return 1;
     }
 }

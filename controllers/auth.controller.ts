@@ -8,10 +8,24 @@ export class AuthController {
         try {
             const user = await AuthService.getInstance().subscribeUser({
                 login: req.body.login,
-                password: req.body.password
+                password: req.body.password,
+                name: req.body.name,
+                surname: req.body.surname,
+                birthdate: req.body.birthdate,
+                adress: {
+                    number: req.body.adress.number,
+                    street: req.body.adress.street,
+                    postalCode: req.body.adress.postalCode,
+                    town: req.body.adress.town,
+                    country: req.body.adress.country,
+                },
+                email: req.body.email,
+                photo: req.body.photo,
             });
+            console.log("coucou before json");
             res.json(user);
         } catch(err) {
+            console.log("error 400");
             res.status(400).end();
         }
     }

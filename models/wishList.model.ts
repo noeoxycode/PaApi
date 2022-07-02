@@ -1,15 +1,13 @@
 import mongoose, {Schema, Document, Model, Types} from "mongoose";
 import {RecipeProps} from "./recipe.models";
 import {UserProps} from "./user.model";
+import {wantedMealSchema} from "./wantedMeal.model";
 
-const wishListSchema = new Schema({
-    content: [[{
-            type: Schema.Types.ObjectId,
-            ref: "Recipe"
-        }],
-            [{type: Schema.Types.Date,
-            ref: "AddDate"}]
-    ],
+export const wishListSchema = new Schema({
+    content: [{
+        type: wantedMealSchema,
+        ref: "Recipe"
+    }],
     idCustomer: {
         type: Schema.Types.ObjectId,
         required: true
@@ -21,7 +19,7 @@ const wishListSchema = new Schema({
 });
 
 export interface WishListProps {
-    content: [string[] | RecipeProps[], Date[]];
+    content: string[] | RecipeProps[];
     idCustomer: string |UserProps;
 }
 
