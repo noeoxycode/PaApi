@@ -15,7 +15,7 @@ export class ProfileController {
         }).exec();
     }
 
-    async updateProfile(req: Request, res: Response) {
+    async  updateProfile(req: Request, res: Response) {
         if(req.headers.authorization){
             try {
                 const tmpUser = await this.getUserByTokenSession(req.headers.authorization);

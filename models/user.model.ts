@@ -66,7 +66,7 @@ const userSchema = new Schema({
         ref: "Cart"
     }],
     wishlist: [{
-        type: wishListSchema,
+        type: Schema.Types.ObjectId,
         ref: "Wishlist"
     }],
     favorite: [{
@@ -114,7 +114,7 @@ export interface UserProps {
     email: string;
     sessions: string[] | SessionProps[];
     cart: string[] | CartProps[];
-    wishlist: WishListProps;
+    wishlist: string[] | WishListProps[];
     favorite: string[] | RecipeProps[];
     stock: StockProps[];
     history: OrderProps[];
