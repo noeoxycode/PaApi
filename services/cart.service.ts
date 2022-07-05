@@ -79,7 +79,6 @@ export class CartService {
     }
 
     async addRecipeToWishlist(item: WishListProps, user: UserProps | null): Promise<UserDocument> {
-        console.log("coucou in service");
         const newUSer = new UserModel(user);
         if(item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null)
             {
@@ -90,6 +89,17 @@ export class CartService {
                 })
                 const createdItem = await newItem.save();
                 newUSer.wishlist.push(createdItem.id);
+            }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
+    async addRecipeToFavorite(toolId: string, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        const tmpRecipe = await this.getRecipeById(toolId);
+        if(toolId && tmpRecipe != null && tmpRecipe.id != null)
+            {
+                newUSer.favorite.push(tmpRecipe.id);
             }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
@@ -115,6 +125,20 @@ export class CartService {
             for(let i = 0; i < tmpUser.cart.length; i++){
                 if(tmpUser.wishlist[i] == itemId){
                     tmpUser.wishlist.splice(i);
+                    break;
+                }
+            }
+            const updatedUser = await tmpUser.save();
+            return updatedUser;
+        }
+    }
+
+    async removeRecipeFromFavorite(itemId: string, user: UserProps | null) {
+        const tmpUser = new UserModel(user);
+        if(tmpUser){
+            for(let i = 0; i < tmpUser.cart.length; i++){
+                if(tmpUser.favorite[i] == itemId){
+                    tmpUser.favorite.splice(i);
                     break;
                 }
             }
