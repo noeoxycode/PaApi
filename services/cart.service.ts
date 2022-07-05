@@ -78,18 +78,13 @@ export class CartService {
         return updatedUSer;
     }
 
-    async addRecipeToWishlist(item: WishListProps, user: UserProps | null): Promise<UserDocument> {
+    async addRecipeToWishlist(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
-        if(item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null)
-            {
-                console.log("coucou in if");
-                const newItem = new WishListModel({
-                    idRecipe: item.idRecipe,
-                    quantity: item.quantity,
-                })
-                const createdItem = await newItem.save();
-                newUSer.wishlist.push(createdItem.id);
-            }
+        const tmpRecipe = await this.getRecipeById(toolId);
+        if(toolId && tmpRecipe != null && tmpRecipe.id != null)
+        {
+            newUSer.wishlist.push(tmpRecipe.id);
+        }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
     }

@@ -57,7 +57,7 @@ export class CartController {
         if(req.headers.authorization){
             const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             try {
-                const tool = await CartService.getInstance().addRecipeToWishlist(req.body, tmpUser);
+                const tool = await CartService.getInstance().addRecipeToWishlist(req.params.recipe_id, tmpUser);
                 res.json(tool);
             } catch(err) {
                 res.status(400).end(); // erreur des données utilisateurs
@@ -199,7 +199,7 @@ export class CartController {
         router.delete('/removeRecipeFromCart/:recipe_id', express.json(), this.removeRecipeFromCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.get('/:recipe_id', this.getRecipeById.bind(this));
         router.get('/', this.getAllRecipe.bind(this));
-        router.put('/addRecipeToWishList', express.json(), this.addRecipeToWishList.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.put('/addRecipeToWishList/:recipe_id', express.json(), this.addRecipeToWishList.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromWishList/:recipe_id', express.json(), this.removeRecipeFromWishlist.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addRecipeToFavorite/:recipe_id', express.json(), this.addRecipeToFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromFavorite/:recipe_id', express.json(), this.removeRecipeFromFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
