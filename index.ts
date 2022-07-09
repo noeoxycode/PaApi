@@ -1,4 +1,5 @@
 import {config} from "dotenv";
+import cors from "cors";
 config();
 
 import express from "express";
@@ -20,6 +21,15 @@ async function startServer(): Promise<void> {
    });
 
    const app = express();
+   app.use(cors())
+   app.use(function (req, res, next) {
+
+      // Website you wish to allow to connect
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+      res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      next();
+   });
 
    const coffeeController = new CoffeeController();
    app.use('/coffee', coffeeController.buildRoutes()); // enregistrement d'un routeur
