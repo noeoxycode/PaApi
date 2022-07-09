@@ -188,6 +188,24 @@ export class CartController {
         res.json(recipes);
     }
 
+    async passOrder(req: Request, res: Response) {
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            let id = 0;
+            try {
+                if(tmpUser && tmpUser.id)
+                 id = tmpUser.id;
+                const tool = await CartService.getInstance(). createOrder(req.body, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else
+            console.log("Error");
+    }
+
     buildRoutes(): Router {
         const router = express.Router();
         //router.use();
@@ -203,7 +221,10 @@ export class CartController {
         router.delete('/removeRecipeFromWishList/:recipe_id', express.json(), this.removeRecipeFromWishlist.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addRecipeToFavorite/:recipe_id', express.json(), this.addRecipeToFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromFavorite/:recipe_id', express.json(), this.removeRecipeFromFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
-
+        router.put('/order', express.json(), this.passOrder.bind(this));
+        //retirer un tool a un user
+        // get all tools
+        // changer la quantité d'un element du panier
         return router;
     }
 }
