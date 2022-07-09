@@ -43,6 +43,10 @@ export class CartService {
         return ToolModel.findById(toolId).exec();
     }
 
+    async getCartModelById(cartId: string): Promise<CartDocument | null> {
+        return CartModel.findById(cartId).exec();
+    }
+
     async getUserById(userId: string): Promise<UserDocument | null> {
         return await UserModel.findById(userId).exec();
     }
@@ -62,7 +66,7 @@ export class CartService {
         return updatedUSer;
     }
 
-    async addRecipeToCart(item: CartProps, user: UserProps | null): Promise<UserDocument> {
+    async addNewRecipeToCart(item: CartProps, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
         if(item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null)
             {
@@ -76,6 +80,24 @@ export class CartService {
             }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
+    }
+
+    async addRecipeToCart(item: CartProps, user: UserProps | null): Promise<CartDocument | UserDocument | undefined> {
+        if (item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null && user) {
+            for (let i = 0; i < user.cart.length; i++) {
+                const currentCartToCheck = await this.getCartModelById(user.cart[i].toString());
+                if(currentCartToCheck)
+                console.log("id current", currentCartToCheck.idRecipe);
+                console.log("id item recipe", item.idRecipe);
+                if (currentCartToCheck && currentCartToCheck.id != null && currentCartToCheck.idRecipe == item.idRecipe) {
+                    currentCartToCheck.quantity += item.quantity;
+                    const res = await currentCartToCheck.save();
+                    return res;
+                }
+            }
+        }
+        const res = this.addNewRecipeToCart(item, user);
+        return res;
     }
 
     async addRecipeToWishlist(toolId: string, user: UserProps | null): Promise<UserDocument> {
@@ -93,9 +115,9 @@ export class CartService {
         const newUSer = new UserModel(user);
         const tmpRecipe = await this.getRecipeById(toolId);
         if(toolId && tmpRecipe != null && tmpRecipe.id != null)
-            {
-                newUSer.favorite.push(tmpRecipe.id);
-            }
+        {
+            newUSer.favorite.push(tmpRecipe.id);
+        }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
     }
