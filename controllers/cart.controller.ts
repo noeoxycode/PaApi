@@ -53,6 +53,36 @@ export class CartController {
             console.log("Error");
     }
 
+    async addRecipeToWishList(req: Request, res: Response){
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const tool = await CartService.getInstance().addRecipeToWishlist(req.params.recipe_id, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else
+            console.log("Error");
+    }
+
+    async addRecipeToFavorite(req: Request, res: Response){
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const tool = await CartService.getInstance().addRecipeToFavorite(req.params.recipe_id, tmpUser);
+                res.json(tool);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else
+            console.log("Error");
+    }
+
     async createTool(req: Request, res: Response) {
             const toolBody = req.body;
             if(!req.body.name || !req.body.photo || !req.body.description) {
@@ -88,11 +118,44 @@ export class CartController {
     }
 
     async removeRecipeFromCart(req: Request, res: Response) {
-        console.log("coucou");
         if(req.headers.authorization){
             const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             try {
                 const success = await CartService.getInstance().removeRecipeFromCart(req.params.recipe_id, tmpUser);
+                if(success) {
+                    res.status(204).end();
+                } else {
+                    console.log("error");
+                    res.status(404).end();
+                }
+            } catch(err) {
+                res.status(400).end();
+            }
+        }
+    }
+
+    async removeRecipeFromWishlist(req: Request, res: Response) {
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const success = await CartService.getInstance().removeRecipeFromWishlist(req.params.recipe_id, tmpUser);
+                if(success) {
+                    res.status(204).end();
+                } else {
+                    console.log("error");
+                    res.status(404).end();
+                }
+            } catch(err) {
+                res.status(400).end();
+            }
+        }
+    }
+
+    async removeRecipeFromFavorite(req: Request, res: Response) {
+        if(req.headers.authorization){
+            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            try {
+                const success = await CartService.getInstance().removeRecipeFromFavorite(req.params.recipe_id, tmpUser);
                 if(success) {
                     res.status(204).end();
                 } else {
@@ -136,7 +199,11 @@ export class CartController {
         router.delete('/removeRecipeFromCart/:recipe_id', express.json(), this.removeRecipeFromCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.get('/:recipe_id', this.getRecipeById.bind(this));
         router.get('/', this.getAllRecipe.bind(this));
+        router.put('/addRecipeToWishList/:recipe_id', express.json(), this.addRecipeToWishList.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.delete('/removeRecipeFromWishList/:recipe_id', express.json(), this.removeRecipeFromWishlist.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.put('/addRecipeToFavorite/:recipe_id', express.json(), this.addRecipeToFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.delete('/removeRecipeFromFavorite/:recipe_id', express.json(), this.removeRecipeFromFavorite.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
 
-      return router;
+        return router;
     }
 }

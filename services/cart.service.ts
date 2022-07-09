@@ -5,6 +5,7 @@ import {UserDocument, UserModel, UserProps} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
 import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
+import {WishListModel, WishListProps} from "../models/wishList.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -77,12 +78,62 @@ export class CartService {
         return updatedUSer;
     }
 
+    async addRecipeToWishlist(toolId: string, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        const tmpRecipe = await this.getRecipeById(toolId);
+        if(toolId && tmpRecipe != null && tmpRecipe.id != null)
+        {
+            newUSer.wishlist.push(tmpRecipe.id);
+        }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
+    async addRecipeToFavorite(toolId: string, user: UserProps | null): Promise<UserDocument> {
+        const newUSer = new UserModel(user);
+        const tmpRecipe = await this.getRecipeById(toolId);
+        if(toolId && tmpRecipe != null && tmpRecipe.id != null)
+            {
+                newUSer.favorite.push(tmpRecipe.id);
+            }
+        const updatedUSer = await newUSer.save();
+        return updatedUSer;
+    }
+
     async removeRecipeFromCart(itemId: string, user: UserProps | null) {
         const tmpUser = new UserModel(user);
         if(tmpUser){
             for(let i = 0; i < tmpUser.cart.length; i++){
                 if(tmpUser.cart[i] == itemId){
                     tmpUser.cart.splice(i);
+                    break;
+                }
+            }
+            const updatedUser = await tmpUser.save();
+            return updatedUser;
+        }
+    }
+
+    async removeRecipeFromWishlist(itemId: string, user: UserProps | null) {
+        const tmpUser = new UserModel(user);
+        if(tmpUser){
+            for(let i = 0; i < tmpUser.cart.length; i++){
+                if(tmpUser.wishlist[i] == itemId){
+                    tmpUser.wishlist.splice(i);
+                    break;
+                }
+            }
+            const updatedUser = await tmpUser.save();
+            return updatedUser;
+        }
+    }
+
+    async removeRecipeFromFavorite(itemId: string, user: UserProps | null) {
+        const tmpUser = new UserModel(user);
+        if(tmpUser){
+            for(let i = 0; i < tmpUser.cart.length; i++){
+                if(tmpUser.favorite[i] == itemId){
+                    tmpUser.favorite.splice(i);
                     break;
                 }
             }
