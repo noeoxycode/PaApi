@@ -119,7 +119,7 @@ export interface UserProps {
     stock: StockProps[];
     history: OrderProps[];
     material: string[] | ToolProps[];
-    orderinProgress: [OrderProps];
+    orderInProgress: OrderProps[];
     linkedProfiles: [string | UserProps];
     photo: string;
 }

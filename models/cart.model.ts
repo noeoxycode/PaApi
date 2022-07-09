@@ -11,10 +11,10 @@ export const cartSchema = new Schema({
       type: Schema.Types.Number,
       required: true
     },
-    numberCart: {
-        type: Schema.Types.Number,
-        required: true
-    },
+    plannedMeal: {
+        type: Schema.Types.Date,
+        required: false
+    }
 }, {
     collection: "cart",
     timestamps: true,
@@ -24,7 +24,7 @@ export const cartSchema = new Schema({
 export interface CartProps {
     idRecipe : string | RecipeProps;
     quantity : number;
-    numberCart:number;
+    plannedMeal: Date | null;
 }
 
 export type CartDocument = CartProps & Document;
