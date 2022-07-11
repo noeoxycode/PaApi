@@ -37,7 +37,7 @@ export class ProfileController {
         const router = express.Router();
         //router.use();
         router.use(checkUserConnected(""));
-    router.put('/updateProfile', express.json(), this.updateProfile.bind(this));
+        router.put('/updateProfile', express.json(), this.updateProfile.bind(this));
         return router;
     }
 }

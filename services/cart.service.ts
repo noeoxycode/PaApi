@@ -35,6 +35,41 @@ export class CartService {
     async getAllRecipe(): Promise<RecipeDocument[]> {
         return RecipeModel.find().exec();
     }
+    async getAllCartContent(cart: string[] | CartProps[]): Promise<{ id: string; quantity: number; numberCart: number; recipe: RecipeDocument; }[]> {
+        console.log("test a");
+       let content:CartDocument[]=[];
+       let tes:{
+           id:string,
+           quantity:number,
+           numberCart:number,
+           recipe:RecipeDocument
+       }[]=[]
+        console.log("test b");
+        for (const element of cart) {
+                let tmp = await this.getCartModelById(element.toString());
+                if (tmp !== null) {
+                    content.push(tmp);
+            }
+        }
+        console.log("test c");
+        let cpt=0;
+        for (const element of content) {
+            let tmp
+                tmp=await this.getRecipeById(element.idRecipe.toString());
+                if(tmp!==null) {
+                    console.log(content[cpt]);
+                    tes.push({id:content[cpt].id, quantity:content[cpt].quantity, numberCart:content[cpt].numberCart, recipe:tmp})
+                    console.log(content[cpt]);
+
+            }
+                cpt++;
+        }
+        console.log("test d",tes);
+        return tes;
+    }
+    async getAllTool(): Promise<ToolDocument[]> {
+        return ToolModel.find().exec();
+    }
 
     async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
@@ -100,6 +135,22 @@ export class CartService {
         return res;
     }
 
+    async updateCart(cart: CartDocument | null, props: CartDocument): Promise<CartDocument | null> {
+        console.log("begin of update cart");
+        const newCart = new CartModel(cart);
+        if(!newCart) {
+            return null;
+        }
+        if(props.quantity !== undefined) {
+            newCart.quantity = props.quantity;
+        }
+        if(props.idRecipe !== undefined) {
+            newCart.idRecipe = props.idRecipe;
+        }
+        const updatedCart = await newCart.save();
+        return updatedCart;
+    }
+
     async addRecipeToWishlist(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
         const tmpRecipe = await this.getRecipeById(toolId);
@@ -127,7 +178,7 @@ export class CartService {
         if(tmpUser){
             for(let i = 0; i < tmpUser.cart.length; i++){
                 if(tmpUser.cart[i] == itemId){
-                    tmpUser.cart.splice(i);
+                    tmpUser.cart.splice(i,1);
                     break;
                 }
             }
