@@ -6,6 +6,8 @@ import {RestoDocument, RestoModel} from "../models/restau.model";
 import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 import {WishListModel, WishListProps} from "../models/wishList.model";
+import {InterventionModel, InterventionProps} from "../models/intervention.model";
+import {OrderModel, OrderProps} from "../models/order.model";
 export class CartService {
     private static instance?: CartService;
     public static getInstance(): CartService {
@@ -71,14 +73,14 @@ export class CartService {
         return ToolModel.find().exec();
     }
 
-    async getRecipeById(recipeId: string): Promise<RecipeDocument | null> {
+    async getRecipeById(recipeId: string | RecipeProps): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
     }
     async getToolById(toolId: string): Promise<ToolDocument | null> {
         return ToolModel.findById(toolId).exec();
     }
 
-    async getCartModelById(cartId: string): Promise<CartDocument | null> {
+    async getCartById(cartId: string | CartProps): Promise<CartDocument | null> {
         return CartModel.findById(cartId).exec();
     }
 
@@ -108,7 +110,6 @@ export class CartService {
                 const newItem = new CartModel({
                     idRecipe: item.idRecipe,
                     quantity: item.quantity,
-                    numberCart: item.numberCart
                 })
                 const createdItem = await newItem.save();
                 newUSer.cart.push(createdItem.id);
@@ -120,10 +121,7 @@ export class CartService {
     async addRecipeToCart(item: CartProps, user: UserProps | null): Promise<CartDocument | UserDocument | undefined> {
         if (item.idRecipe && await this.getRecipeById(item.idRecipe.toString()) != null && user) {
             for (let i = 0; i < user.cart.length; i++) {
-                const currentCartToCheck = await this.getCartModelById(user.cart[i].toString());
-                if(currentCartToCheck)
-                console.log("id current", currentCartToCheck.idRecipe);
-                console.log("id item recipe", item.idRecipe);
+                const currentCartToCheck = await this.getCartById(user.cart[i].toString());
                 if (currentCartToCheck && currentCartToCheck.id != null && currentCartToCheck.idRecipe == item.idRecipe) {
                     currentCartToCheck.quantity += item.quantity;
                     const res = await currentCartToCheck.save();
@@ -233,5 +231,47 @@ export class CartService {
             }
         }
         return 1;
+    }
+
+    async getOrderPrice(interventions: InterventionProps[]){
+        let price = 0;
+        for(let i = 0; i < interventions.length; i++){
+            for(let j = 0; j < interventions[i].idCart.length; j++){
+                const tmpCart = await this.getCartById(interventions[i].idCart[j]);
+                // @ts-ignore
+                const tmpRecipe = await this.getRecipeById(tmpCart.idRecipe);
+                // @ts-ignore
+                price+=tmpRecipe.price;
+            }
+
+        }
+        return price;
+    }
+
+    async createOrder(interventions: InterventionProps[], user: UserProps | null){
+        const newUser = new UserModel(user);
+        let price = await this.getOrderPrice(interventions);
+        const newOrder = new OrderModel({
+            price: price,
+            status: "En attente",
+            customerId: newUser.id,
+            intervention: []
+        });
+        for(let i =0; i < interventions.length; i++){
+            const newIntervention = new InterventionModel({
+                    idCart: interventions[i].idCart,
+                    datePlanned: interventions[i].datePlanned,
+                    idPreparator: interventions[i].idPreparator,
+                    idCustomer: newUser.id
+                },
+            );
+            const createIntervention = await  newIntervention.save();
+            newOrder.intervention.push(createIntervention);
+        }
+        const createdOrder = await newOrder.save();
+        newUser.orderInProgress.push(createdOrder.id);
+        newUser.cart = [];
+        const updatedUSer = await newUser.save();
+        return updatedUSer;
     }
 }

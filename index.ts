@@ -3,11 +3,8 @@ import cors from "cors";
 config();
 
 import express from "express";
-import {AuthController, CoffeeController, BigBossController,AdminController} from "./controllers";
+import {AuthController, CoffeeController, BigBossController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
-import {CustomerController} from "./controllers/customer.controller";
-import {PreparatorController} from "./controllers/preparator.controller";
-import {DeliverController} from "./controllers/deliver.controller";
 import {CartController} from "./controllers/cart.controller";
 import {ProfileController} from "./controllers/profile.controller";
 
@@ -37,14 +34,6 @@ async function startServer(): Promise<void> {
    app.use('/auth', authController.buildRoutes())
    const bigbossController = new BigBossController();
    app.use('/bigboss', bigbossController.buildRoutes())
-   const adminController = new AdminController();
-   app.use('/admin', adminController.buildRoutes())
-   const customerController = new CustomerController;
-   app.use('/customer', customerController.buildRoutes())
-   const preparatorController = new PreparatorController();
-   app.use('/preparator', preparatorController.buildRoutes())
-   const deliverController = new DeliverController();
-   app.use('/deliver', deliverController.buildRoutes())
    const cartController = new CartController();
    app.use('/cart', cartController.buildRoutes())
    const profileController = new ProfileController();
