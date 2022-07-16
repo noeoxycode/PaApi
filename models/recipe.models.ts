@@ -61,6 +61,7 @@ export interface RecipeProps {
     instruction: number;
     photo:string;
     requirerTool:string[]|ToolProps[];
+    type:string[];
 }
 
 export type RecipeDocument = RecipeProps & Document;

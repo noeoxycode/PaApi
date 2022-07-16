@@ -5,7 +5,7 @@ import {UserDocument, UserModel, UserProps} from "../models";
 import {RestoDocument, RestoModel} from "../models/restau.model";
 import {ToolDocument, ToolModel, ToolProps} from "../models/tools.model";
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
-import {WishListModel, WishListProps} from "../models/wishList.model";
+import {WishListDocument, WishListModel, WishListProps} from "../models/wishList.model";
 import {InterventionModel, InterventionProps} from "../models/intervention.model";
 import {OrderModel, OrderProps} from "../models/order.model";
 export class CartService {
@@ -37,9 +37,64 @@ export class CartService {
     async getAllRecipe(): Promise<RecipeDocument[]> {
         return RecipeModel.find().exec();
     }
+    async getAllCartContent(cart: string[] | CartProps[]): Promise<{ id: string; quantity: number; plannedMeal: Date|null; recipe: RecipeDocument; }[]> {
+        console.log("test a");
+       let content:CartDocument[]=[];
+       let tes:{
+           id:string,
+           quantity:number,
+           plannedMeal:Date|null,
+           recipe:RecipeDocument
+       }[]=[]
+        console.log("test b");
+        for (const element of cart) {
+                let tmp = await this.getCartById(element.toString());
+                if (tmp !== null) {
+                    content.push(tmp);
+            }
+        }
+        console.log("test c");
+        let cpt=0;
+        for (const element of content) {
+            let tmp
+            tmp=await this.getRecipeById(element.idRecipe.toString());
+            if(tmp!==null) {
+                console.log(content[cpt]);
+                tes.push({id:content[cpt].id, quantity:content[cpt].quantity, plannedMeal:content[cpt].plannedMeal, recipe:tmp})
+                console.log(content[cpt]);
+
+            }
+                cpt++;
+        }
+        console.log("test d",tes);
+        return tes;
+    }
+
+
+    async getAllRecipeContent(list: string[] | RecipeProps[]): Promise<RecipeDocument[]> {
+        console.log("test a");
+       let content:RecipeDocument[]=[];
+
+        console.log("test b");
+        for (const element of list) {
+                let tmp = await this.getRecipeById(element.toString());
+                if (tmp !== null) {
+                    content.push(tmp);
+            }
+        }
+
+        console.log("test d",content);
+        return content;
+    }
+    async getAllTool(): Promise<ToolDocument[]> {
+        return ToolModel.find().exec();
+    }
 
     async getRecipeById(recipeId: string | RecipeProps): Promise<RecipeDocument | null> {
         return RecipeModel.findById(recipeId).exec();
+    }
+    async getWishById(wishId: string | WishListProps): Promise<WishListDocument | null> {
+        return WishListModel.findById(wishId).exec();
     }
     async getToolById(toolId: string): Promise<ToolDocument | null> {
         return ToolModel.findById(toolId).exec();
@@ -98,6 +153,22 @@ export class CartService {
         return res;
     }
 
+    async updateCart(cart: CartDocument | null, props: CartDocument): Promise<CartDocument | null> {
+        console.log("begin of update cart");
+        const newCart = new CartModel(cart);
+        if(!newCart) {
+            return null;
+        }
+        if(props.quantity !== undefined) {
+            newCart.quantity = props.quantity;
+        }
+        if(props.idRecipe !== undefined) {
+            newCart.idRecipe = props.idRecipe;
+        }
+        const updatedCart = await newCart.save();
+        return updatedCart;
+    }
+
     async addRecipeToWishlist(toolId: string, user: UserProps | null): Promise<UserDocument> {
         const newUSer = new UserModel(user);
         const tmpRecipe = await this.getRecipeById(toolId);
@@ -109,12 +180,19 @@ export class CartService {
         return updatedUSer;
     }
 
-    async addRecipeToFavorite(toolId: string, user: UserProps | null): Promise<UserDocument> {
+    async addRecipeToFavorite(recipelId: string, user: UserProps | null): Promise<UserDocument|null> {
         const newUSer = new UserModel(user);
-        const tmpRecipe = await this.getRecipeById(toolId);
-        if(toolId && tmpRecipe != null && tmpRecipe.id != null)
-        {
-            newUSer.favorite.push(tmpRecipe.id);
+        const tmpRecipe = await this.getRecipeById(recipelId);
+        if (tmpRecipe===null){
+            throw "Already exist";
+        }
+        if(!newUSer.favorite.includes(tmpRecipe.id)){
+            if(recipelId && tmpRecipe.id != null)
+            {
+                newUSer.favorite.push(tmpRecipe.id);
+            }
+        }else{
+            throw "Recipe error";
         }
         const updatedUSer = await newUSer.save();
         return updatedUSer;
@@ -125,7 +203,7 @@ export class CartService {
         if(tmpUser){
             for(let i = 0; i < tmpUser.cart.length; i++){
                 if(tmpUser.cart[i] == itemId){
-                    tmpUser.cart.splice(i);
+                    tmpUser.cart.splice(i,1);
                     break;
                 }
             }
@@ -137,9 +215,9 @@ export class CartService {
     async removeRecipeFromWishlist(itemId: string, user: UserProps | null) {
         const tmpUser = new UserModel(user);
         if(tmpUser){
-            for(let i = 0; i < tmpUser.cart.length; i++){
+            for(let i = 0; i < tmpUser.wishlist.length; i++){
                 if(tmpUser.wishlist[i] == itemId){
-                    tmpUser.wishlist.splice(i);
+                    tmpUser.wishlist.splice(i,1);
                     break;
                 }
             }
@@ -151,9 +229,9 @@ export class CartService {
     async removeRecipeFromFavorite(itemId: string, user: UserProps | null) {
         const tmpUser = new UserModel(user);
         if(tmpUser){
-            for(let i = 0; i < tmpUser.cart.length; i++){
-                if(tmpUser.favorite[i] == itemId){
-                    tmpUser.favorite.splice(i);
+            for(let i = 0; i < tmpUser.favorite.length; i++){
+                if(tmpUser.favorite[i].toString() === itemId){
+                    tmpUser.favorite.splice(i,1);
                     break;
                 }
             }

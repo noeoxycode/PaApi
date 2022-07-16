@@ -1,2 +1,6 @@
 export * from './coffee.service'
 export * from './auth.service'
+export * from './cart.service'
+export * from './bigboss.service'
+export * from './profile.service'
+export * from './recipe.service'

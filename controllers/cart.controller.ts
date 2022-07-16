@@ -1,10 +1,11 @@
 import express, {Router, Request, Response} from "express";
 import {CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
-import {CartService} from "../services/cart.service";
+import {CartService} from "../services";
 import {OrderDocument, OrderModel} from "../models/order.model";
 import {UserDocument, UserModel} from "../models";
 import {ToolModel, ToolProps} from "../models/tools.model";
+import {CartDocument, CartModel} from "../models/cart.model";
 
 export class CartController {
 
@@ -49,8 +50,44 @@ export class CartController {
                 return;
             }
         }
-        else
+        else {
             console.log("Error");
+        }
+    }
+
+    async getCartById(req: Request, res: Response) {
+        try {
+            const cart = await CartService.getInstance().getCartById(req.params.cart_id);
+            if(cart === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(cart);
+        } catch(err) {
+            res.status(400).end();
+            return;
+        }
+    }
+
+    async updateCart(req: Request, res: Response){
+        if(req.headers.authorization){
+            const tmpCart = await CartService.getInstance().getCartById(req.params.cart_id);
+            try {
+                const cart = await CartService.getInstance().updateCart(tmpCart,req.body);
+                if(!cart) {
+                    res.status(404).end();
+                    return;
+                }
+                res.json(cart);
+            } catch(err) {
+                res.status(400).end(); // erreur des données utilisateurs
+                return;
+            }
+        }
+        else {
+            res.status(401).end();
+            console.log("Error");
+        }
     }
 
     async addRecipeToWishList(req: Request, res: Response){
@@ -135,10 +172,14 @@ export class CartController {
     }
 
     async removeRecipeFromWishlist(req: Request, res: Response) {
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
         if(req.headers.authorization){
-            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             try {
-                const success = await CartService.getInstance().removeRecipeFromWishlist(req.params.recipe_id, tmpUser);
+                const success = await CartService.getInstance().removeRecipeFromWishlist(req.params.recipe_id, req.user);
                 if(success) {
                     res.status(204).end();
                 } else {
@@ -182,10 +223,97 @@ export class CartController {
         }
     }
 
+    async getToolById(req: Request, res: Response) {
+        try {
+            const tool = await CartService.getInstance().getToolById(req.params.tool_id);
+            if(tool === null) {
+                res.status(404).end();
+                return;
+            }
+            res.json(tool);
+        } catch(err) {
+            res.status(400).end();
+            return;
+        }
+    }
+
     async getAllRecipe(req: Request, res: Response) {
         console.log("coucou in get all recipe controller");
         const recipes = await CartService.getInstance().getAllRecipe();
         res.json(recipes);
+    }
+
+    async getCartContent(req: Request, res: Response) {
+        console.log("coucou in get all cart controller");
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
+        try {
+            console.log("coucou f");
+                let recipes = await CartService.getInstance().getAllCartContent(req.user.cart);
+                res.json(recipes);
+
+
+        }catch(err){
+            console.log("b")
+            res.status(402).end();
+            return;
+        }
+        res.status(405).end();
+        return;
+
+    }
+    async getFavContent(req: Request, res: Response) {
+        console.log("coucou in get all fav controller");
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
+        try {
+            console.log("coucou f");
+                let recipes = await CartService.getInstance().getAllRecipeContent(req.user.favorite);
+                res.json(recipes);
+
+
+        }catch(err){
+            console.log("b")
+            res.status(402).end();
+            return;
+        }
+        res.status(405).end();
+        return;
+
+    }
+    async getWishContent(req: Request, res: Response) {
+        console.log("coucou in get all wish controller");
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
+        try {
+            console.log("coucou f");
+            let recipes = await CartService.getInstance().getAllRecipeContent(req.user.wishlist);
+            res.json(recipes);
+
+
+        }catch(err){
+            console.log("b")
+            res.status(402).end();
+            return;
+        }
+        res.status(405).end();
+        return;
+
+    }
+
+    async getAllTool(req: Request, res: Response) {
+        console.log("coucou in get all tool controller");
+        const tools = await CartService.getInstance().getAllTool();
+        res.json(tools);
     }
 
     async passOrder(req: Request, res: Response) {
@@ -210,12 +338,19 @@ export class CartController {
         const router = express.Router();
         //router.use();
         router.use(checkUserConnected(""));
+        router.get('/content', this.getCartContent.bind(this));
+        router.get('/allFavContent', this.getFavContent.bind(this));
+        router.get('/allWishContent', this.getWishContent.bind(this));
         router.post('/createTool', express.json(), this.createTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/deleteTool/:tool_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.get('/allTool', this.getAllTool.bind(this));
+        router.get('/tool/:tool_id', this.getToolById.bind(this));
         router.put('/addRecipeToCart', express.json(), this.addRecipeToCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
+        router.get('/:cart_id', this.getCartById.bind(this));
+        router.put('/updateCart/:cart_id', express.json(), this.updateCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromCart/:recipe_id', express.json(), this.removeRecipeFromCart.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
-        router.get('/:recipe_id', this.getRecipeById.bind(this));
+        router.get('/recipe/:recipe_id', this.getRecipeById.bind(this));
         router.get('/', this.getAllRecipe.bind(this));
         router.put('/addRecipeToWishList/:recipe_id', express.json(), this.addRecipeToWishList.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/removeRecipeFromWishList/:recipe_id', express.json(), this.removeRecipeFromWishlist.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello

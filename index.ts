@@ -3,10 +3,15 @@ import cors from "cors";
 config();
 
 import express from "express";
-import {AuthController, CoffeeController, BigBossController} from "./controllers";
 import mongoose, {Mongoose} from "mongoose";
-import {CartController} from "./controllers/cart.controller";
-import {ProfileController} from "./controllers/profile.controller";
+import {
+   AuthController,
+   BigBossController,
+   CartController,
+   CoffeeController,
+   ProfileController,
+   RecipeController
+} from "./controllers";
 
 async function startServer(): Promise<void> {
 
@@ -38,6 +43,8 @@ async function startServer(): Promise<void> {
    app.use('/cart', cartController.buildRoutes())
    const profileController = new ProfileController();
    app.use('/profile', profileController.buildRoutes())
+   const recipeController = new RecipeController();
+   app.use('/recipe', recipeController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);
