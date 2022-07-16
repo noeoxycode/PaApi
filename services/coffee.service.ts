@@ -1,4 +1,5 @@
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
+import {InterventionDocument, InterventionModel} from "../models/intervention.model";
 export class CoffeeService {
     private static instance?: CoffeeService;
     public static getInstance(): CoffeeService {
@@ -15,8 +16,8 @@ export class CoffeeService {
         return coffee;
     }
 
-    async getAll(): Promise<CoffeeDocument[]> {
-        return CoffeeModel.find().exec();
+    async getAll(): Promise<InterventionDocument[]> {
+        return InterventionModel.find().exec();
     }
 
     async getById(coffeeId: string): Promise<CoffeeDocument | null> {
