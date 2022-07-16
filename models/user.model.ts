@@ -114,7 +114,7 @@ export interface UserProps {
     email: string;
     sessions: string[] | SessionProps[];
     cart: string[] | CartProps[];
-    wishlist: string[] | WishListProps[];
+    wishlist: string[] | RecipeProps[];
     favorite: string[] | RecipeProps[];
     stock: StockProps[];
     history: OrderProps[];

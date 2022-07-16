@@ -1,7 +1,7 @@
 import express, {Router, Request, Response} from "express";
 import {CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
-import {CartService} from "../services/cart.service";
+import {CartService} from "../services";
 import {OrderDocument, OrderModel} from "../models/order.model";
 import {UserDocument, UserModel} from "../models";
 import {ToolModel, ToolProps} from "../models/tools.model";
@@ -57,7 +57,7 @@ export class CartController {
 
     async getCartById(req: Request, res: Response) {
         try {
-            const cart = await CartService.getInstance().getCartModelById(req.params.cart_id);
+            const cart = await CartService.getInstance().getCartById(req.params.cart_id);
             if(cart === null) {
                 res.status(404).end();
                 return;
@@ -71,7 +71,7 @@ export class CartController {
 
     async updateCart(req: Request, res: Response){
         if(req.headers.authorization){
-            const tmpCart = await CartService.getInstance().getCartModelById(req.params.cart_id);
+            const tmpCart = await CartService.getInstance().getCartById(req.params.cart_id);
             try {
                 const cart = await CartService.getInstance().updateCart(tmpCart,req.body);
                 if(!cart) {
@@ -172,10 +172,14 @@ export class CartController {
     }
 
     async removeRecipeFromWishlist(req: Request, res: Response) {
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
         if(req.headers.authorization){
-            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             try {
-                const success = await CartService.getInstance().removeRecipeFromWishlist(req.params.recipe_id, tmpUser);
+                const success = await CartService.getInstance().removeRecipeFromWishlist(req.params.recipe_id, req.user);
                 if(success) {
                     res.status(204).end();
                 } else {
@@ -261,6 +265,50 @@ export class CartController {
         return;
 
     }
+    async getFavContent(req: Request, res: Response) {
+        console.log("coucou in get all fav controller");
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
+        try {
+            console.log("coucou f");
+                let recipes = await CartService.getInstance().getAllRecipeContent(req.user.favorite);
+                res.json(recipes);
+
+
+        }catch(err){
+            console.log("b")
+            res.status(402).end();
+            return;
+        }
+        res.status(405).end();
+        return;
+
+    }
+    async getWishContent(req: Request, res: Response) {
+        console.log("coucou in get all wish controller");
+        if(req.user===undefined){
+            console.log("a")
+            res.status(401).end();
+            return;
+        }
+        try {
+            console.log("coucou f");
+            let recipes = await CartService.getInstance().getAllRecipeContent(req.user.wishlist);
+            res.json(recipes);
+
+
+        }catch(err){
+            console.log("b")
+            res.status(402).end();
+            return;
+        }
+        res.status(405).end();
+        return;
+
+    }
 
     async getAllTool(req: Request, res: Response) {
         console.log("coucou in get all tool controller");
@@ -291,6 +339,8 @@ export class CartController {
         //router.use();
         router.use(checkUserConnected(""));
         router.get('/content', this.getCartContent.bind(this));
+        router.get('/allFavContent', this.getFavContent.bind(this));
+        router.get('/allWishContent', this.getWishContent.bind(this));
         router.post('/createTool', express.json(), this.createTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.delete('/deleteTool/:tool_id', express.json(), this.deleteMaterial.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
         router.put('/addTool/:tool_id', express.json(), this.addTool.bind(this)); // permet de forcer le this lors de l'appel de la fonction sayHello
