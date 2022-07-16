@@ -1,12 +1,12 @@
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 import {InterventionDocument, InterventionModel} from "../models/intervention.model";
-export class CoffeeService {
-    private static instance?: CoffeeService;
-    public static getInstance(): CoffeeService {
-        if(CoffeeService.instance === undefined) {
-            CoffeeService.instance = new CoffeeService();
+export class PreparatorService {
+    private static instance?: PreparatorService;
+    public static getInstance(): PreparatorService {
+        if(PreparatorService.instance === undefined) {
+            PreparatorService.instance = new PreparatorService();
         }
-        return CoffeeService.instance;
+        return PreparatorService.instance;
     }
     private constructor() { }
 
@@ -16,8 +16,10 @@ export class CoffeeService {
         return coffee;
     }
 
-    async getAll(): Promise<InterventionDocument[]> {
-        return InterventionModel.find().exec();
+    async getAllInterventions(id: string): Promise<InterventionDocument[]> {
+        return InterventionModel.find({
+            idCustomer: id
+        }).exec();
     }
 
     async getById(coffeeId: string): Promise<CoffeeDocument | null> {
