@@ -1,8 +1,8 @@
 import express, {Router, Request, Response} from "express";
-import {RecipeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {UserDocument, UserModel} from "../models";
 import {ProfileService} from "../services/profile.service";
+import {RecipeService} from "../services/recipe.service";
 
 export class RecipeController {
 
