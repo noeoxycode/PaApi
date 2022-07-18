@@ -34,6 +34,7 @@ export class PreparatorController {
     async getAllInterventionsAfter(req: Request, res: Response) {
         const body = req.body;
         const date = body.date;
+        console.log("coucou", date);
         if(req.headers.authorization){
             const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
             let id;
@@ -88,6 +89,15 @@ export class PreparatorController {
             }
         }
     }
+    async getAllPreparator(req: Request, res: Response){
+        try {
+            const prep = await PreparatorService.getInstance().getPreparator();
+            res.json({prep
+            });
+        } catch(err) {
+            res.status(401).end(); // unauthorized
+        }
+    }
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -96,6 +106,7 @@ export class PreparatorController {
         router.get('/interventions', this.getAllInterventions.bind(this));
         router.get('/interventionsAfter', express.json(), this.getAllInterventionsAfter.bind(this));
         router.get('/interventionsBefore',express.json(), this.getAllInterventionsBefore.bind(this));
+        router.get('/getPreparator',express.json(), this.getAllPreparator.bind(this));
         router.get('/freePreparatoratdate', express.json(), this.freePreparatoratdate.bind(this));
         return router;
     }

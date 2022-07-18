@@ -18,6 +18,7 @@ export class AuthUtils {
         }
         return false;
     }
+
     static async getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
         let idsession = "";
         if(reqHeader)
