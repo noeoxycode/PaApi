@@ -15,7 +15,6 @@ export class CartController {
     }
 
     getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
-        console.log("coucou in cringe name", reqHeader);
         let idsession = "";
         if(reqHeader)
             idsession = reqHeader.slice(7);
@@ -239,20 +238,17 @@ export class CartController {
     }
 
     async getAllRecipe(req: Request, res: Response) {
-        console.log("coucou in get all recipe controller");
         const recipes = await CartService.getInstance().getAllRecipe();
         res.json(recipes);
     }
 
     async getCartContent(req: Request, res: Response) {
-        console.log("coucou in get all cart controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
                 let recipes = await CartService.getInstance().getAllCartContent(req.user.cart);
                 res.json(recipes);
 
@@ -267,14 +263,12 @@ export class CartController {
 
     }
     async getFavContent(req: Request, res: Response) {
-        console.log("coucou in get all fav controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
                 let recipes = await CartService.getInstance().getAllRecipeContent(req.user.favorite);
                 res.json(recipes);
 
@@ -289,14 +283,12 @@ export class CartController {
 
     }
     async getWishContent(req: Request, res: Response) {
-        console.log("coucou in get all wish controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
             let recipes = await CartService.getInstance().getAllRecipeContent(req.user.wishlist);
             res.json(recipes);
 
@@ -312,7 +304,6 @@ export class CartController {
     }
 
     async getAllTool(req: Request, res: Response) {
-        console.log("coucou in get all tool controller");
         const tools = await CartService.getInstance().getAllTool();
         res.json(tools);
     }

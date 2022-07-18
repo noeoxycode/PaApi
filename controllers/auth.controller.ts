@@ -23,7 +23,6 @@ export class AuthController {
                 email: req.body.email,
                 photo: req.body.photo,
             });
-            console.log("coucou before json");
             res.json(user);
         } catch(err) {
             console.log("error 400");

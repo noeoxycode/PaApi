@@ -1,6 +1,7 @@
 import {CoffeeDocument, CoffeeModel, CoffeeProps} from "../models/coffee.model";
 import {InterventionDocument, InterventionModel} from "../models/intervention.model";
 import {Schema} from "mongoose";
+import {UserModel, UserProps} from "../models";
 export class PreparatorService {
     private static instance?: PreparatorService;
     private izi: any;
@@ -35,6 +36,27 @@ export class PreparatorService {
         }
         console.log("interventions : ", interventions);
         return interventions;
+    }
+
+    async getAllFreePreparatorAtDate(date: Date, afterDate: Date): Promise<UserProps[]> {
+        let tmp =  await InterventionModel.find().exec();
+        let idPreparator: string[] = [];
+        for(let i = 0; i < tmp.length; i++){
+            if(tmp[i].datePlanned < afterDate && tmp[i].datePlanned >= date){
+                if(!idPreparator.includes(tmp[i].idPreparator.toString())){
+                    idPreparator.push(tmp[i].idPreparator.toString());
+                }
+            }
+        }
+        let preparatorsfree: UserProps[] = [];
+        for(let i = 0; i < idPreparator.length; i++){
+            const tmp = UserModel.findById(idPreparator[i]).exec();
+            console.log('tmp : ', tmp);
+            const prepa = new UserModel(tmp);
+            console.log("prepa", prepa);
+            preparatorsfree.push(prepa);
+        }
+        return preparatorsfree;
     }
 
     async getAllInterventionsBefore(id: string): Promise<InterventionDocument[]> {

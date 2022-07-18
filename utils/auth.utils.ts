@@ -19,7 +19,6 @@ export class AuthUtils {
         return false;
     }
     static async getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
-        console.log("coucou in cringe name", reqHeader);
         let idsession = "";
         if(reqHeader)
             idsession = reqHeader.slice(7);
