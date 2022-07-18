@@ -263,14 +263,14 @@ export class CartService {
     async getOrderPrice(interventions: InterventionProps[]){
         let price = 0;
         for(let i = 0; i < interventions.length; i++){
-            for(let j = 0; j < interventions[i].idCart.length; j++){
-                const tmpCart = await this.getCartById(interventions[i].idCart[j]);
-                // @ts-ignore
-                const tmpRecipe = await this.getRecipeById(tmpCart.idRecipe);
-                // @ts-ignore
-                price+=tmpRecipe.price;
+            for(let j = 0; j < interventions[i].idRecipe.length; j++){
+                const tmpRecipe = await this.getRecipeById(interventions[i].idRecipe[j]);
+                    console.log("a : ",price,tmpRecipe)
+                if(tmpRecipe) {
+                    console.log("b : ",price)
+                    price += tmpRecipe.price*interventions[i].quantity[j];
+                }
             }
-
         }
         return price;
     }
@@ -286,7 +286,8 @@ export class CartService {
         });
         for(let i =0; i < interventions.length; i++){
             const newIntervention = new InterventionModel({
-                    idCart: interventions[i].idCart,
+                    idRecipe: interventions[i].idRecipe,
+                    quantity: interventions[i].quantity,
                     datePlanned: interventions[i].datePlanned,
                     idPreparator: interventions[i].idPreparator,
                     idCustomer: newUser.id

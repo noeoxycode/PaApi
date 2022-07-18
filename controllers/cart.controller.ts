@@ -6,6 +6,7 @@ import {OrderDocument, OrderModel} from "../models/order.model";
 import {UserDocument, UserModel} from "../models";
 import {ToolModel, ToolProps} from "../models/tools.model";
 import {CartDocument, CartModel} from "../models/cart.model";
+import {AuthUtils} from "../utils";
 
 export class CartController {
 
@@ -14,7 +15,6 @@ export class CartController {
     }
 
     getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
-        console.log("coucou in cirnge name", reqHeader);
         let idsession = "";
         if(reqHeader)
             idsession = reqHeader.slice(7);
@@ -25,7 +25,7 @@ export class CartController {
 
     async addTool(req: Request, res: Response){
         if(req.headers.authorization){
-            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            const tmpUser = await AuthUtils.getUserByTokenSession(req.headers.authorization);
             const toolBody = req.body;
             try {
                 const tool = await CartService.getInstance().asignToolToUser(req.params.tool_id, tmpUser);
@@ -121,22 +121,22 @@ export class CartController {
     }
 
     async createTool(req: Request, res: Response) {
-            const toolBody = req.body;
-            if(!req.body.name || !req.body.photo || !req.body.description) {
-                res.status(400).end(); // 400 -> bad request
-                return;
-            }
-            try {
-                const tool = await CartService.getInstance().createTool({
-                    name: toolBody.name,
-                    photo: toolBody.photo,
-                    description: toolBody.description,
-                });
-                res.json(tool);
-            } catch(err) {
-                res.status(400).end(); // erreur des données utilisateurs
-                return;
-            }
+        const toolBody = req.body;
+        if(!req.body.name || !req.body.photo || !req.body.description) {
+            res.status(400).end(); // 400 -> bad request
+            return;
+        }
+        try {
+            const tool = await CartService.getInstance().createTool({
+                name: toolBody.name,
+                photo: toolBody.photo,
+                description: toolBody.description,
+            });
+            res.json(tool);
+        } catch(err) {
+            res.status(400).end(); // erreur des données utilisateurs
+            return;
+        }
     }
 
 
@@ -238,20 +238,17 @@ export class CartController {
     }
 
     async getAllRecipe(req: Request, res: Response) {
-        console.log("coucou in get all recipe controller");
         const recipes = await CartService.getInstance().getAllRecipe();
         res.json(recipes);
     }
 
     async getCartContent(req: Request, res: Response) {
-        console.log("coucou in get all cart controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
                 let recipes = await CartService.getInstance().getAllCartContent(req.user.cart);
                 res.json(recipes);
 
@@ -266,14 +263,12 @@ export class CartController {
 
     }
     async getFavContent(req: Request, res: Response) {
-        console.log("coucou in get all fav controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
                 let recipes = await CartService.getInstance().getAllRecipeContent(req.user.favorite);
                 res.json(recipes);
 
@@ -288,14 +283,12 @@ export class CartController {
 
     }
     async getWishContent(req: Request, res: Response) {
-        console.log("coucou in get all wish controller");
         if(req.user===undefined){
             console.log("a")
             res.status(401).end();
             return;
         }
         try {
-            console.log("coucou f");
             let recipes = await CartService.getInstance().getAllRecipeContent(req.user.wishlist);
             res.json(recipes);
 
@@ -311,7 +304,6 @@ export class CartController {
     }
 
     async getAllTool(req: Request, res: Response) {
-        console.log("coucou in get all tool controller");
         const tools = await CartService.getInstance().getAllTool();
         res.json(tools);
     }
@@ -323,7 +315,7 @@ export class CartController {
             try {
                 if(tmpUser && tmpUser.id)
                  id = tmpUser.id;
-                const tool = await CartService.getInstance(). createOrder(req.body, tmpUser);
+                const tool = await CartService.getInstance(). createOrder(req.body.donnee, tmpUser);
                 res.json(tool);
             } catch(err) {
                 res.status(400).end(); // erreur des données utilisateurs

@@ -55,6 +55,7 @@ export function checkUserConnected(role:string): RequestHandler {
         try {
             const user = await AuthService.getInstance().getUserFrom(token);
             if(user === null) {
+                console.log("13")
                 res.status(401).end();
                 return;
             }

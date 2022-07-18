@@ -1,10 +1,15 @@
 import mongoose, {Schema, Document, Model} from "mongoose";
 import {CartProps} from "./cart.model";
 import {UserProps} from "./user.model";
+import {RecipeProps} from "./recipe.models";
 
 const interventionSchema = new Schema({
-    idCart: [{
+    idRecipe: [{
         type: Schema.Types.ObjectId,
+        required: true
+    }],
+    quantity: [{
+        type: Schema.Types.Number,
         required: true
     }],
     datePlanned: {
@@ -25,7 +30,8 @@ const interventionSchema = new Schema({
 });
 
 export interface InterventionProps {
-    idCart: CartProps[];
+    idRecipe: RecipeProps[];
+    quantity: number[];
     datePlanned: Date;
     idPreparator: string | UserProps;
     idCustomer: string | UserProps;
