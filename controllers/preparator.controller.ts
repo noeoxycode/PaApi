@@ -1,5 +1,5 @@
 import express, {Router, Request, Response} from "express";
-import {CartService, CoffeeService} from "../services";
+import {AuthService, CartService, CoffeeService} from "../services";
 import {checkUserConnected} from "../middlewares";
 import {PreparatorService} from "../services";
 import {UserDocument, UserModel} from "../models";
@@ -65,6 +65,15 @@ export class PreparatorController {
             }
         }
     }
+    async getAllPreparator(req: Request, res: Response){
+        try {
+            const prep = await PreparatorService.getInstance().getPreparator();
+            res.json({prep
+            });
+        } catch(err) {
+            res.status(401).end(); // unauthorized
+        }
+    }
 
     buildRoutes(): Router {
         const router = express.Router();
@@ -73,6 +82,7 @@ export class PreparatorController {
         router.get('/interventions', this.getAllInterventions.bind(this));
         router.get('/interventionsAfter', express.json(), this.getAllInterventionsAfter.bind(this));
         router.get('/interventionsBefore',express.json(), this.getAllInterventionsBefore.bind(this));
+        router.get('/getPreparator',express.json(), this.getAllPreparator.bind(this));
         return router;
     }
 }

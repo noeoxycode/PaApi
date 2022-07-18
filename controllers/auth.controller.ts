@@ -61,6 +61,7 @@ export class AuthController {
         }
     }
 
+
     async logUser(req: Request, res: Response) {
         const platform = req.headers['user-agent'] || "Unknown";
         try {
