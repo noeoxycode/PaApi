@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import {UserModel, UserProps} from "../models";
+import {UserDocument, UserModel, UserProps} from "../models";
 import {SessionModel} from "../models/session.model";
 
 export class AuthUtils {
@@ -17,5 +17,17 @@ export class AuthUtils {
             return true;
         }
         return false;
+    }
+    static async getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
+        console.log("coucou in cringe name", reqHeader);
+        let idsession = "";
+        if(reqHeader)
+            idsession = reqHeader.slice(7);
+        return UserModel.findOne({
+            sessions : idsession
+        }).exec();
+    }
+    static async getUserById(id: string): Promise<UserDocument | null> {
+        return UserModel.findOne({_id : id}).exec();
     }
 }

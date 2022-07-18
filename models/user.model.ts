@@ -14,7 +14,8 @@ export const possibleRole:{[status:string]:string;}={
     "BigBoss":'BigBoss',
     "Admin": 'Admin',
     "Customer": 'Customer',
-    "Assistant": 'Assistant'
+    "Assistant": 'Assistant',
+    "Preparator": 'Preparator'
 }
 export enum Role {
     BigBoss,
@@ -23,7 +24,7 @@ export enum Role {
     Assistant
 }
 
-const userSchema = new Schema({
+export const userSchema = new Schema({
     login: {
         type: Schema.Types.String,
         required: true,

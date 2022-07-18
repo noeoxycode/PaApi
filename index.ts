@@ -10,7 +10,8 @@ import {
    CartController,
    CoffeeController,
    ProfileController,
-   RecipeController
+   PreparatorController,
+   RecipeController, AdminController
 } from "./controllers";
 
 async function startServer(): Promise<void> {
@@ -45,6 +46,10 @@ async function startServer(): Promise<void> {
    app.use('/profile', profileController.buildRoutes())
    const recipeController = new RecipeController();
    app.use('/recipe', recipeController.buildRoutes())
+   const preparatorController = new PreparatorController();
+   app.use('/preparator', preparatorController.buildRoutes())
+   const adminController = new AdminController();
+   app.use('/admin', adminController.buildRoutes())
 
    app.listen(process.env.PORT, function() {
       console.log("Server listening on port " + process.env.PORT);

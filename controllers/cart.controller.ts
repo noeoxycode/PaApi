@@ -6,6 +6,7 @@ import {OrderDocument, OrderModel} from "../models/order.model";
 import {UserDocument, UserModel} from "../models";
 import {ToolModel, ToolProps} from "../models/tools.model";
 import {CartDocument, CartModel} from "../models/cart.model";
+import {AuthUtils} from "../utils";
 
 export class CartController {
 
@@ -14,7 +15,7 @@ export class CartController {
     }
 
     getUserByTokenSession(reqHeader: string): Promise<UserDocument | null> {
-        console.log("coucou in cirnge name", reqHeader);
+        console.log("coucou in cringe name", reqHeader);
         let idsession = "";
         if(reqHeader)
             idsession = reqHeader.slice(7);
@@ -25,7 +26,7 @@ export class CartController {
 
     async addTool(req: Request, res: Response){
         if(req.headers.authorization){
-            const tmpUser = await this.getUserByTokenSession(req.headers.authorization);
+            const tmpUser = await AuthUtils.getUserByTokenSession(req.headers.authorization);
             const toolBody = req.body;
             try {
                 const tool = await CartService.getInstance().asignToolToUser(req.params.tool_id, tmpUser);
@@ -121,22 +122,22 @@ export class CartController {
     }
 
     async createTool(req: Request, res: Response) {
-            const toolBody = req.body;
-            if(!req.body.name || !req.body.photo || !req.body.description) {
-                res.status(400).end(); // 400 -> bad request
-                return;
-            }
-            try {
-                const tool = await CartService.getInstance().createTool({
-                    name: toolBody.name,
-                    photo: toolBody.photo,
-                    description: toolBody.description,
-                });
-                res.json(tool);
-            } catch(err) {
-                res.status(400).end(); // erreur des données utilisateurs
-                return;
-            }
+        const toolBody = req.body;
+        if(!req.body.name || !req.body.photo || !req.body.description) {
+            res.status(400).end(); // 400 -> bad request
+            return;
+        }
+        try {
+            const tool = await CartService.getInstance().createTool({
+                name: toolBody.name,
+                photo: toolBody.photo,
+                description: toolBody.description,
+            });
+            res.json(tool);
+        } catch(err) {
+            res.status(400).end(); // erreur des données utilisateurs
+            return;
+        }
     }
 
 

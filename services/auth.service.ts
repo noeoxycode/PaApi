@@ -3,6 +3,8 @@ import {AuthUtils, SecurityUtils} from "../utils";
 import {SessionDocument, SessionModel} from "../models/session.model";
 import {Session} from "inspector";
 import {CartModel, cartSchema} from "../models/cart.model";
+import {RecipeModel, RecipeProps} from "../models/recipe.models";
+import {DemandeModel, DemandeProps} from "../models/demande.model";
 
 export class AuthService {
 
@@ -16,6 +18,7 @@ export class AuthService {
     }
 
     private constructor() { }
+
 
     public async subscribeUser(user: Partial<UserProps>): Promise<UserDocument> {
         if(!user.password) {
@@ -40,30 +43,51 @@ export class AuthService {
             throw new Error('Missing photo');
         }
         let roleName="";
-        if(await AuthUtils.checkBigBoss()){
+        if(await AuthUtils.checkBigBoss()) {
             roleName = possibleRole["BigBoss"];
         }else{
             roleName = possibleRole["Customer"];
         }
-            const model = new UserModel({
-                login: user.login,
-                password: SecurityUtils.sha512(user.password),
-                role: roleName,
+        const model = new UserModel({
+            login: user.login,
+            password: SecurityUtils.sha512(user.password),
+            role: roleName,
 
-                name: user.name,
-                surname: user.surname,
-                birthdate: user.birthdate,
-                adress: {
-                    number: user.adress.number,
-                    street: user.adress.street,
-                    postalCode: user.adress.postalCode,
-                    town: user.adress.town,
-                    country: user.adress.country,
-                },
-                email: user.email,
-                photo: user.photo,
-            });
+            name: user.name,
+            surname: user.surname,
+            birthdate: user.birthdate,
+            adress: {
+                number: user.adress.number,
+                street: user.adress.street,
+                postalCode: user.adress.postalCode,
+                town: user.adress.town,
+                country: user.adress.country,
+            },
+            email: user.email,
+            photo: user.photo,
+        });
+        let verif=await this.checkDuplicate(model.name,model.surname,model.email);
+        if (verif){
             return model.save();
+        }else{
+            throw "Already exist";
+        }
+    }
+
+    async checkDuplicate(name:string,surname:string,email:string){
+        let tmp=await RecipeModel.find({name: name,surname:surname,email:email}).count().exec();
+        console.log("compteur :",tmp)
+        if (tmp===0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public async createDemande(props: DemandeProps){
+        const model = new DemandeModel(props);
+        const demande = await model.save();
+        return demande;
     }
 
     // Pick selectionne des champs dans le type
